@@ -3,16 +3,35 @@
 {% block page_product_detail_media %}
     {{ parent() }}
     
-    {% if page.extensions.aiScenePreview and page.extensions.aiScenePreview.enabled %}
+    {# Check if feature is enabled globally and for this product #}
+    {% set isEnabled = config('FlinkAiScenePreviewApp.config.enabled') and page.product.customFields.flink_ai_scene_preview_enabled|default(false) %}
+    
+    {% if isEnabled %}
+        {# Resolve product image from custom field if available #}
+        {% set productImage = null %}
+        {% if page.product.customFields.flink_ai_scene_preview_image %}
+            {% set mediaIds = [page.product.customFields.flink_ai_scene_preview_image] %}
+            {% set mediaCollection = searchMedia(mediaIds, context.context) %}
+            {% set productMedia = mediaCollection.get(page.product.customFields.flink_ai_scene_preview_image) %}
+            {% if productMedia %}
+                {% set productImage = productMedia.url %}
+            {% endif %}
+        {% endif %}
+        
+        {# Fall back to product cover if no custom image #}
+        {% if not productImage and page.product.cover and page.product.cover.media %}
+            {% set productImage = page.product.cover.media.url %}
+        {% endif %}
+        
         <div class="ai-scene-preview-button-wrapper mt-3">
             <button type="button"
                     class="btn btn-primary btn-block ai-scene-preview-button"
                     data-ai-scene-preview-trigger
-                    data-product-id="{{ page.extensions.aiScenePreview.productId }}"
-                    data-product-name="{{ page.extensions.aiScenePreview.productName }}"
-                    data-product-image="{{ page.extensions.aiScenePreview.productImage }}"
-                    data-max-generations="{{ page.extensions.aiScenePreview.maxGenerations }}"
-                    data-debug-mode="{{ page.extensions.aiScenePreview.debugMode ? 'true' : 'false' }}">
+                    data-product-id="{{ page.product.id }}"
+                    data-product-name="{{ page.product.translated.name|default('Product') }}"
+                    data-product-image="{{ productImage }}"
+                    data-max-generations="{{ config('FlinkAiScenePreviewApp.config.maxGenerationsPerSession') }}"
+                    data-debug-mode="{{ config('FlinkAiScenePreviewApp.config.debugMode') ? 'true' : 'false' }}">
                 <i class="icon icon-eye"></i>
                 {{ "ai-scene-preview.button.previewInRoom"|trans }}
             </button>
@@ -23,7 +42,10 @@
 {% block base_script_router %}
     {{ parent() }}
     
-    {% if page.extensions.aiScenePreview and page.extensions.aiScenePreview.enabled %}
+    {# Check if feature is enabled globally and for this product #}
+    {% set isEnabled = config('FlinkAiScenePreviewApp.config.enabled') and page.product.customFields.flink_ai_scene_preview_enabled|default(false) %}
+    
+    {% if isEnabled %}
         {# Include AI Scene Preview modal #}
         {% sw_include '@FlinkAiScenePreview/storefront/component/ai-scene-preview-modal.html.twig' %}
     {% endif %}
