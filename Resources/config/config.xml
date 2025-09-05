@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/master/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+        <title>General Settings</title>
+        <title lang="de-DE">Allgemeine Einstellungen</title>
+
+        <input-field type="bool">
+            <name>enabled</name>
+            <label>Enable AI Scene Preview</label>
+            <label lang="de-DE">KI Szenen-Vorschau aktivieren</label>
+            <helpText>Enable or disable the AI scene preview feature globally</helpText>
+            <helpText lang="de-DE">Aktiviert oder deaktiviert die KI Szenen-Vorschau global</helpText>
+            <defaultValue>true</defaultValue>
+        </input-field>
+
+        <input-field type="single-select">
+            <name>apiProvider</name>
+            <label>API Provider</label>
+            <label lang="de-DE">API-Anbieter</label>
+            <helpText>Currently Google does not offer the necessary model in their API yet, so we are using OpenRouter for the time being.</helpText>
+            <helpText lang="de-DE">Aktuell bietet Google den Zugriff zum nötigen Modell noch nicht über die API an, daher nutzen wir bis dahin OpenRouter</helpText>
+            <options>
+                <option>
+                    <id>openrouter</id>
+                    <name>OpenRouter</name>
+                    <name lang="de-DE">OpenRouter</name>
+                </option>
+                <option>
+                    <id>google</id>
+                    <name>Google Gemini (Direct)</name>
+                    <name lang="de-DE">Google Gemini (Direkt)</name>
+                </option>
+            </options>
+            <defaultValue>openrouter</defaultValue>
+        </input-field>
+
+        <input-field type="int">
+            <name>maxGenerationsPerSession</name>
+            <label>Max generations per session</label>
+            <label lang="de-DE">Max. Generierungen pro Sitzung</label>
+            <helpText>Maximum number of AI generations a user can perform per session to control API costs</helpText>
+            <helpText lang="de-DE">Maximale Anzahl von KI-Generierungen pro Benutzersitzung zur Kontrolle der API-Kosten</helpText>
+            <defaultValue>5</defaultValue>
+            <min>1</min>
+            <max>50</max>
+        </input-field>
+
+        <input-field type="int">
+            <name>imageDimension</name>
+            <label>Image processing dimension (px)</label>
+            <label lang="de-DE">Bildverarbeitungsgröße (px)</label>
+            <helpText>Target dimension for image processing (will be used for width and height)</helpText>
+            <helpText lang="de-DE">Zielgröße für die Bildverarbeitung (wird für Breite und Höhe verwendet)</helpText>
+            <defaultValue>1024</defaultValue>
+            <min>512</min>
+            <max>2048</max>
+        </input-field>
+
+        <input-field type="int">
+            <name>apiTimeout</name>
+            <label>API timeout (seconds)</label>
+            <label lang="de-DE">API-Timeout (Sekunden)</label>
+            <helpText>Maximum time to wait for AI generation response</helpText>
+            <helpText lang="de-DE">Maximale Wartezeit für KI-Generierungsantwort</helpText>
+            <defaultValue>30</defaultValue>
+            <min>10</min>
+            <max>120</max>
+        </input-field>
+    </card>
+
+    <card>
+        <title>OpenRouter API Settings</title>
+        <title lang="de-DE">OpenRouter API Einstellungen</title>
+        <input-field type="text">
+            <name>openRouterModelName</name>
+            <label>AI Model</label>
+            <label lang="de-DE">KI-Modell</label>
+            <helpText>Model to use for image generation (e.g., google/gemini-2.5-flash-image-preview for OpenRouter)</helpText>
+            <helpText lang="de-DE">Modell für die Bildgenerierung (z.B. google/gemini-2.5-flash-image-preview für OpenRouter)</helpText>
+            <defaultValue>google/gemini-2.5-flash-image-preview</defaultValue>
+        </input-field>
+
+        <input-field type="password">
+            <name>openRouterApiKey</name>
+            <label>OpenRouter API Key</label>
+            <label lang="de-DE">OpenRouter API-Schlüssel</label>
+            <helpText>Your OpenRouter API key (required if using OpenRouter provider)</helpText>
+            <helpText lang="de-DE">Ihr OpenRouter API-Schlüssel (erforderlich bei Verwendung von OpenRouter)</helpText>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Google API Settings</title>
+        <title lang="de-DE">Google API Einstellungen</title>
+
+
+        <input-field type="text">
+            <name>googleModelName</name>
+            <label>AI Model</label>
+            <label lang="de-DE">KI-Modell</label>
+            <helpText>Model to use for image generation (e.g., gemini-2.5-flash-image-preview for Google)</helpText>
+            <helpText lang="de-DE">Modell für die Bildgenerierung (z.B. gemini-2.5-flash-image-preview für Google)</helpText>
+            <defaultValue>gemini-2.5-flash-image-preview</defaultValue>
+        </input-field>
+
+        <input-field type="password">
+            <name>geminiApiKey</name>
+            <label>Google Gemini API Key</label>
+            <label lang="de-DE">Google Gemini API-Schlüssel</label>
+            <helpText>Your Google Gemini API key (required if using Google provider)</helpText>
+            <helpText lang="de-DE">Ihr Google Gemini API-Schlüssel (erforderlich bei Verwendung von Google)</helpText>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Advanced Settings</title>
+        <title lang="de-DE">Erweiterte Einstellungen</title>
+
+        <input-field type="bool">
+            <name>debugMode</name>
+            <label>Debug mode</label>
+            <label lang="de-DE">Debug-Modus</label>
+            <helpText>Enable debug mode to show additional information during generation</helpText>
+            <helpText lang="de-DE">Aktiviert den Debug-Modus für zusätzliche Informationen während der Generierung</helpText>
+            <defaultValue>false</defaultValue>
+        </input-field>
+
+        <input-field type="int">
+            <name>maxUploadSize</name>
+            <label>Max upload size (MB)</label>
+            <label lang="de-DE">Max. Upload-Größe (MB)</label>
+            <helpText>Maximum file size for customer scene image uploads</helpText>
+            <helpText lang="de-DE">Maximale Dateigröße für Kunden-Szenenbilduploads</helpText>
+            <defaultValue>10</defaultValue>
+            <min>1</min>
+            <max>50</max>
+        </input-field>
+    </card>
+</config>

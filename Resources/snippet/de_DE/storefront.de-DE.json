@@ -1,0 +1,38 @@
+{
+    "ai-scene-preview": {
+        "button": {
+            "previewInRoom": "In Ihrem Raum vorschauen"
+        },
+        "modal": {
+            "title": "KI Szenen-Vorschau",
+            "product": "Produkt",
+            "scene": "Szene",
+            "close": "Schließen",
+            "generationsRemaining": "Generierungen verbleibend",
+            "uploadScene": "Laden Sie Ihr Raumfoto hoch",
+            "uploadInstruction": "Wählen Sie ein Foto Ihres Raums, in dem Sie dieses Produkt sehen möchten. Für beste Ergebnisse verwenden Sie gute Beleuchtung und eine klare Sicht.",
+            "selectImage": "Bild auswählen",
+            "changeScene": "Szene ändern",
+            "showDebug": "Debug-Info anzeigen",
+            "dragInstruction": "Ziehen Sie mich in die Szene oder tippen Sie, wo Sie mich haben möchten!",
+            "instructions": "Ziehen Sie das Produkt dorthin, wo es in der Szene platziert werden soll, oder klicken Sie einfach auf die gewünschte Stelle.",
+            "analyzing": "Analysiere Ihr Produkt...",
+            "generating": "Generiere...",
+            "limitReached": "Sie haben das Generierungslimit für diese Sitzung erreicht. Bitte laden Sie die Seite neu, um eine neue Sitzung zu starten."
+        },
+        "debug": {
+            "title": "Debug-Informationen",
+            "markedImage": "Markiertes Szenenbild",
+            "prompt": "Generierungs-Prompt"
+        },
+        "error": {
+            "noImage": "Bitte laden Sie zuerst ein Bild hoch",
+            "invalidImage": "Bitte wählen Sie eine gültige Bilddatei",
+            "uploadFailed": "Fehler beim Hochladen des Bildes",
+            "generationFailed": "Fehler beim Generieren der Vorschau",
+            "sessionLimit": "Generierungslimit für diese Sitzung erreicht",
+            "networkError": "Netzwerkfehler aufgetreten. Bitte versuchen Sie es erneut.",
+            "unknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+        }
+    }
+}

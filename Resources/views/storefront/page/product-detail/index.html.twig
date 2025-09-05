@@ -1,0 +1,30 @@
+{% sw_extends '@Storefront/storefront/page/product-detail/index.html.twig' %}
+
+{% block page_product_detail_media %}
+    {{ parent() }}
+    
+    {% if page.extensions.aiScenePreview and page.extensions.aiScenePreview.enabled %}
+        <div class="ai-scene-preview-button-wrapper mt-3">
+            <button type="button"
+                    class="btn btn-primary btn-block ai-scene-preview-button"
+                    data-ai-scene-preview-trigger
+                    data-product-id="{{ page.extensions.aiScenePreview.productId }}"
+                    data-product-name="{{ page.extensions.aiScenePreview.productName }}"
+                    data-product-image="{{ page.extensions.aiScenePreview.productImage }}"
+                    data-max-generations="{{ page.extensions.aiScenePreview.maxGenerations }}"
+                    data-debug-mode="{{ page.extensions.aiScenePreview.debugMode ? 'true' : 'false' }}">
+                <i class="icon icon-eye"></i>
+                {{ "ai-scene-preview.button.previewInRoom"|trans }}
+            </button>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block base_script_router %}
+    {{ parent() }}
+    
+    {% if page.extensions.aiScenePreview and page.extensions.aiScenePreview.enabled %}
+        {# Include AI Scene Preview modal #}
+        {% sw_include '@FlinkAiScenePreview/storefront/component/ai-scene-preview-modal.html.twig' %}
+    {% endif %}
+{% endblock %}

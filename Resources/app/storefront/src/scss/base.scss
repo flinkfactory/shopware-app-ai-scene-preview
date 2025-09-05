@@ -1,0 +1,288 @@
+// AI Scene Preview Plugin Styles
+
+.ai-scene-preview-button-wrapper {
+    .ai-scene-preview-button {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        .icon {
+            margin-right: 0.5rem;
+
+            svg {
+                top: 3px;
+            }
+        }
+    }
+}
+
+// Modal Styles
+#aiScenePreviewModal {
+    .modal-dialog {
+        max-width: 95vw;
+    }
+    
+    .ai-scene-preview-counter {
+        .icon {
+            margin-right: 0.5rem;
+        }
+    }
+    
+    .ai-scene-product-card {
+        background: #f8f9fa;
+        border: 2px solid $sw-border-color;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: move;
+        
+        &:hover {
+            border-color: $sw-color-brand-primary;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+        }
+        
+        img {
+            max-height: 150px;
+            object-fit: contain;
+        }
+        
+        &[draggable="true"] {
+            user-select: none;
+        }
+    }
+    
+    .ai-scene-upload-area {
+        .upload-dropzone {
+            border: 3px dashed #dee2e6;
+            border-radius: 0.75rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            min-height: 300px;
+            
+            &:hover {
+                border-color: $sw-color-brand-primary;
+                background: #f0f8ff;
+            }
+            
+            .upload-label {
+                cursor: pointer;
+                display: block;
+                height: 100%;
+                margin: 0;
+                
+                &:hover {
+                    .display-4 {
+                        color: $sw-color-brand-primary;
+                        transform: translateY(-5px);
+                    }
+                    
+                    .btn {
+                        transform: translateY(-2px);
+                    }
+                }
+                
+                .display-4 {
+                    transition: all 0.3s ease;
+                    color: $sw-border-color;
+                }
+                
+                .btn {
+                    transition: all 0.3s ease;
+                }
+            }
+        }
+    }
+    
+    .ai-scene-preview-area {
+        .preview-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            
+            img {
+                max-height: 400px;
+                cursor: crosshair;
+            }
+            
+            .placement-orb {
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                margin-left: -10px;
+                margin-top: -10px;
+                pointer-events: none;
+                z-index: 10;
+                
+                .orb-indicator {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    background: #ff0000;
+                    border: 3px solid #ffffff;
+                    border-radius: 50%;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                    animation: pulse 1.5s infinite;
+                }
+            }
+            
+            .loading-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 20;
+                
+                &.d-none {
+                    display: none !important;
+                }
+                
+                .spinner-border {
+                    width: 3rem;
+                    height: 3rem;
+                }
+                
+                p {
+                    margin: 0;
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+    
+    .ai-scene-instructions {
+        .icon {
+            margin-right: 0.25rem;
+        }
+    }
+    
+    .ai-scene-error-message {
+        .alert {
+            .icon {
+                margin-right: 0.5rem;
+            }
+        }
+    }
+}
+
+// Touch Ghost for Mobile
+.ai-scene-touch-ghost {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.8;
+    
+    .touch-ghost-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border: 2px solid $sw-color-brand-primary;
+        border-radius: 0.25rem;
+        background: rgba(255, 255, 255, 0.9);
+    }
+}
+
+// Debug Modal
+#aiSceneDebugModal {
+    .modal-body {
+        h6 {
+            color: $sw-text-color;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        pre {
+            font-size: 0.875rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    }
+}
+
+// Animations
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    #aiScenePreviewModal {
+        .modal-dialog {
+            margin: 0.5rem;
+        }
+        
+        .ai-scene-preview-content {
+            .row {
+                flex-direction: column;
+            }
+            
+            .col-md-3,
+            .col-md-9 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+        
+        .ai-scene-product-card {
+            margin-bottom: 1rem;
+            
+            img {
+                max-height: 100px;
+            }
+        }
+        
+        .ai-scene-preview-area {
+            .preview-container {
+                img {
+                    max-height: 250px;
+                }
+            }
+        }
+    }
+}

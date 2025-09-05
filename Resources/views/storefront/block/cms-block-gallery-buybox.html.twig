@@ -1,0 +1,26 @@
+{% sw_extends '@Storefront/storefront/block/cms-block-gallery-buybox.html.twig' %}
+
+{% block block_gallery_buybox_column_left_inner %}
+    {{ parent() }}
+
+    {% if page.extensions.aiScenePreview and page.extensions.aiScenePreview.enabled %}
+        {% set options = {
+            'productId': page.extensions.aiScenePreview.productId,
+            'productName': page.extensions.aiScenePreview.productName,
+            'productImage': page.extensions.aiScenePreview.productImage,
+            'maxGenerations': page.extensions.aiScenePreview.maxGenerations,
+            'debugMode': page.extensions.aiScenePreview.debugMode,
+        } %}
+        <div class="ai-scene-preview-button-wrapper mt-3">
+            <button type="button"
+                    class="btn btn-primary btn-block ai-scene-preview-button"
+                    data-ai-scene-preview-trigger="true"
+                    data-ai-scene-preview-options='{{ options|json_encode }}'>
+                {% sw_icon 'eye-open' style { size: 'xs'} %}
+                {{ "ai-scene-preview.button.previewInRoom"|trans }}
+            </button>
+        </div>
+
+        {% sw_include '@FlinkAiScenePreview/storefront/component/ai-scene-preview-modal.html.twig' %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{
+    "ai-scene-preview": {
+        "button": {
+            "previewInRoom": "Preview in your room"
+        },
+        "modal": {
+            "title": "AI Scene Preview",
+            "product": "Product",
+            "scene": "Scene",
+            "close": "Close",
+            "generationsRemaining": "generations remaining",
+            "uploadScene": "Upload your room photo",
+            "uploadInstruction": "Choose a photo of your room where you'd like to see this product. For best results, use good lighting and a clear view.",
+            "selectImage": "Select Image",
+            "changeScene": "Change Scene",
+            "showDebug": "Show Debug Info",
+            "dragInstruction": "Drag me to the scene or tap where you want me!",
+            "instructions": "Drag the product to where you want it placed in the scene, or simply click on the desired location.",
+            "analyzing": "Analyzing your product...",
+            "generating": "Generating...",
+            "limitReached": "You've reached the generation limit for this session. Please refresh the page to start a new session."
+        },
+        "debug": {
+            "title": "Debug Information",
+            "markedImage": "Marked Scene Image",
+            "prompt": "Generation Prompt"
+        },
+        "error": {
+            "noImage": "Please upload an image first",
+            "invalidImage": "Please select a valid image file",
+            "uploadFailed": "Failed to upload image",
+            "generationFailed": "Failed to generate preview",
+            "sessionLimit": "Generation limit reached for this session",
+            "networkError": "Network error occurred. Please try again.",
+            "unknownError": "An unknown error occurred. Please try again."
+        }
+    }
+}

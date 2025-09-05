@@ -1,0 +1,174 @@
+{# AI Scene Preview Modal #}
+<div class="modal fade"
+     id="aiScenePreviewModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="aiScenePreviewModalLabel"
+     aria-hidden="true"
+     data-ai-scene-preview-modal>
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="aiScenePreviewModalLabel">
+                    {{ "ai-scene-preview.modal.title"|trans }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                {# Generation Counter #}
+                <div class="ai-scene-preview-counter mb-3 d-none">
+                    <div class="alert alert-info d-flex align-items-center text-white" role="alert">
+                        {% sw_icon 'info' style { size: 'sm'} %}
+                        <strong data-generations-remaining class="me-1">{{ config('FlinkAiScenePreview.config.maxGenerationsPerSession') }}</strong> {{ "ai-scene-preview.modal.generationsRemaining"|trans }}
+                    </div>
+                </div>
+
+                {# Main Content Area #}
+                <div class="ai-scene-preview-content">
+                    <div class="row">
+                        {# Product Column #}
+                        <div class="col-md-3 col-lg-2">
+                            <h6 class="mb-3">{{ "ai-scene-preview.modal.product"|trans }}</h6>
+                            <div class="ai-scene-product-card" data-product-display draggable="true" style="cursor: move;">
+                                <img src="" alt="" class="img-fluid" data-product-image>
+                                <p class="mt-2 text-center small mb-0" data-product-name></p>
+                            </div>
+                        </div>
+
+                        {# Scene Column #}
+                        <div class="col-md-9 col-lg-10">
+                            <h6 class="mb-3">{{ "ai-scene-preview.modal.scene"|trans }}</h6>
+                            
+                            {# Upload Area (Initial State) #}
+                            <div class="ai-scene-upload-area" data-scene-upload>
+                                <div class="upload-dropzone">
+                                    <input type="file"
+                                           id="sceneImageInput"
+                                           accept="image/*"
+                                           style="display: none;"
+                                           data-scene-input>
+                                    
+                                    <label for="sceneImageInput" class="upload-label">
+                                        <div class="text-center p-5">
+                                            {% sw_icon 'cloud-upload' style { size:'xs' } %}
+                                            <h5>{{ "ai-scene-preview.modal.uploadScene"|trans }}</h5>
+                                            <p class="text-muted">
+                                                {{ "ai-scene-preview.modal.uploadInstruction"|trans }}
+                                            </p>
+                                            <span class="btn btn-primary mt-3">
+                                                {{ "ai-scene-preview.modal.selectImage"|trans }}
+                                            </span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {# Preview Area (After Upload) #}
+                            <div class="ai-scene-preview-area d-none" data-scene-preview>
+                                <div class="preview-container"
+                                     data-dropzone="true"
+                                     data-scene-dropzone>
+                                    <img src="" alt="" class="img-fluid" data-scene-image>
+                                    
+                                    {# Placement Orb #}
+                                    <div class="placement-orb d-none" data-placement-orb>
+                                        <span class="orb-indicator"></span>
+                                    </div>
+                                    
+                                    {# Loading Overlay #}
+                                    <div class="loading-overlay d-none" data-loading-overlay>
+                                        <div class="spinner-border text-light" role="status">
+                                            <span class="visually-hidden">{{ "ai-scene-preview.modal.generating"|trans }}</span>
+                                        </div>
+                                        <p class="text-white mt-3" data-loading-message>
+                                            {{ "ai-scene-preview.modal.generating"|trans }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {# Instructions #}
+                                <div class="ai-scene-instructions mt-3">
+                                    <p class="text-muted small">
+                                        {% sw_icon 'info' style { size:'xs' } %}
+                                        {{ "ai-scene-preview.modal.instructions"|trans }}
+                                    </p>
+                                </div>
+                                
+                                {# Action Buttons #}
+                                <div class="mt-3 d-flex justify-content-between">
+                                    <button type="button"
+                                            class="btn btn-outline-secondary"
+                                            data-change-scene>
+                                        {{ "ai-scene-preview.modal.changeScene"|trans }}
+                                    </button>
+                                    
+                                    <button type="button"
+                                            class="btn btn-outline-info d-none"
+                                            data-debug-button>
+                                        {{ "ai-scene-preview.modal.showDebug"|trans }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Error Message Area #}
+                <div class="ai-scene-error-message d-none mt-3" data-error-message>
+                    <div class="alert alert-danger d-flex align-items-center text-white" role="alert">
+                        {% sw_icon 'warning' style { size:'sm' } %}
+                        <span data-error-text></span>
+                    </div>
+                </div>
+
+                {# Touch Ghost for Mobile #}
+                <div class="ai-scene-touch-ghost d-none" data-touch-ghost>
+                    <img src="" alt="" class="touch-ghost-image">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    {{ "ai-scene-preview.modal.close"|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Debug Modal #}
+<div class="modal fade"
+     id="aiSceneDebugModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="aiSceneDebugModalLabel"
+     aria-hidden="true"
+     data-ai-scene-debug-modal>
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="aiSceneDebugModalLabel">
+                    {{ "ai-scene-preview.debug.title"|trans }}
+                </h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <h6>{{ "ai-scene-preview.debug.markedImage"|trans }}</h6>
+                <img src="" alt="" class="img-fluid mb-3" data-debug-image>
+                
+                <h6>{{ "ai-scene-preview.debug.prompt"|trans }}</h6>
+                <pre class="bg-light p-3" data-debug-prompt></pre>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    {{ "ai-scene-preview.modal.close"|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
