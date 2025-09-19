@@ -27,6 +27,20 @@
         <read>media</read>
         <read>system_config</read>
     </permissions>
+    <cookies>
+        <group>
+            <snippet-name>cookie.groupComfortFeatures</snippet-name>
+            <entries>
+                <cookie>
+                    <cookie>flink-ai-scene-preview</cookie>
+                    <snippet-name>ai-scene-preview.cookie.name</snippet-name>
+                    <snippet-description>ai-scene-preview.cookie.description</snippet-description>
+                    <value>1</value>
+                    <expiration>365</expiration>
+                </cookie>
+            </entries>
+        </group>
+    </cookies>
     <custom-fields>
         <custom-field-set>
             <name>flink_ai_scene_preview</name>
