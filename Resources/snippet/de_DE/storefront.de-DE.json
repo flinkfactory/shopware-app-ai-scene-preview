@@ -48,7 +48,24 @@
             "networkError": "Netzwerkfehler aufgetreten. Bitte versuche es erneut.",
             "unknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuche es erneut.",
             "loadFailed": "Das Bild konnte nicht geladen werden. Bitte versuche es erneut.",
-            "generationException": "Im Browser ist während der Generierung ein Fehler aufgetreten. Bitte versuche es erneut."
+            "generationException": "Im Browser ist während der Generierung ein Fehler aufgetreten. Bitte versuche es erneut.",
+            "cookieRequired": "Bitte akzeptiere das KI-Szenenvorschau-Cookie in den Cookie-Einstellungen, um diese Funktion zu nutzen."
+        },
+        "login": {
+            "title": "Bitte anmelden",
+            "description": "Melde dich in deinem Kundenkonto an, um die KI-Szenenvorschau zu nutzen.",
+            "emailLabel": "E-Mail-Adresse",
+            "passwordLabel": "Passwort",
+            "submit": "Anmelden",
+            "forgotPassword": "Passwort vergessen?",
+            "error": "Anmeldung fehlgeschlagen. Bitte überprüfe deine Zugangsdaten und versuche es erneut.",
+            "success": "Du bist jetzt angemeldet und kannst die Szenenvorschau verwenden.",
+            "noAccount": "Du hast noch kein Kundenkonto?",
+            "registerCta": "Jetzt registrieren"
+        },
+        "cookie": {
+            "name": "KI Produktvorschau",
+            "description": "Nutzt Googles Gemini API, um Produktvorschauen mit hochgeladenen Fotos zu erstellen."
         }
     }
 }

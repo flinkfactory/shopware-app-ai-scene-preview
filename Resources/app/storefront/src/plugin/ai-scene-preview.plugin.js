@@ -2,7 +2,8 @@ import Plugin from 'src/plugin-system/plugin.class';
 import AppClient from 'src/service/app-client.service';
 
 // External app server base URL; adjust if the service is deployed elsewhere.
-const FLINK_APP_SERVER_BASE_URL = 'https://apps.flinkfactory.com';
+const FLINK_APP_SERVER_BASE_URL = 'https://apps.flinkfactory.com/ai-scene-preview';
+const SCENE_PREVIEW_COOKIE_NAME = 'flink-ai-scene-preview';
 
 export default class AiScenePreviewPlugin extends Plugin {
     static options = {
@@ -34,15 +35,7 @@ export default class AiScenePreviewPlugin extends Plugin {
         debugButtonSelector: '[data-debug-button]',
         touchGhostSelector: '[data-touch-ghost]',
         debugImageSelector: '[data-debug-image]',
-        debugPromptSelector: '[data-debug-prompt]',
-        loginContainerSelector: '[data-login-container]',
-        loginFormSelector: '[data-login-form]',
-        loginErrorSelector: '[data-login-error]',
-        loginSuccessSelector: '[data-login-success]',
-        loginSubmitSelector: '[data-login-submit]',
-        loginSpinnerSelector: '[data-login-spinner]',
-        contentWrapperSelector: '[data-content-container]',
-        footerSelector: '[data-login-dependent-footer]'
+        debugPromptSelector: '[data-debug-prompt]'
     };
 
     init() {
@@ -63,9 +56,8 @@ export default class AiScenePreviewPlugin extends Plugin {
         this.debugData = null;
         this.translations = {};
         this.isLoggedIn = false;
-        this.isLoggingIn = false;
-        this.loginEndpoint = '/store-api/account/login';
         this.contextToken = null;
+        this.hasCookieConsent = false;
 
         this.loadingMessages = [
             'Analyzing your product...',
@@ -79,7 +71,12 @@ export default class AiScenePreviewPlugin extends Plugin {
         
         this._registerEvents();
         this._getElements();
-        this._initializeLoginHandling();
+
+        this.isLoggedIn = this.modal ? this.modal.dataset.customerLoggedIn === 'true' : false;
+        this.hasCookieConsent = this._hasCookieConsent();
+
+        this._registerCookieConsentListener();
+        this._checkAutoOpenFromQuery();
 
         if (this.isLoggedIn) {
             this._checkSessionStatus();
@@ -150,14 +147,6 @@ export default class AiScenePreviewPlugin extends Plugin {
         this.touchGhost = document.querySelector(this.options.touchGhostSelector);
         this.debugImage = document.querySelector(this.options.debugImageSelector);
         this.debugPrompt = document.querySelector(this.options.debugPromptSelector);
-        this.loginContainer = this.modal ? this.modal.querySelector(this.options.loginContainerSelector) : null;
-        this.loginForm = this.modal ? this.modal.querySelector(this.options.loginFormSelector) : null;
-        this.loginError = this.modal ? this.modal.querySelector(this.options.loginErrorSelector) : null;
-        this.loginSuccess = this.modal ? this.modal.querySelector(this.options.loginSuccessSelector) : null;
-        this.loginSubmit = this.modal ? this.modal.querySelector(this.options.loginSubmitSelector) : null;
-        this.loginSpinner = this.modal ? this.modal.querySelector(this.options.loginSpinnerSelector) : null;
-        this.contentWrapper = this.modal ? this.modal.querySelector(this.options.contentWrapperSelector) : null;
-        this.loginFooter = this.modal ? this.modal.querySelector(this.options.footerSelector) : null;
 
         this._initializeTranslations();
     }
@@ -169,7 +158,8 @@ export default class AiScenePreviewPlugin extends Plugin {
             noImage: 'Please upload an image first.',
             sessionLimit: 'Generation limit reached for this session.',
             generationFailed: 'We had problems placing the product in your scene. Please try again. For best results, make sure that the scene image has enough free space available to place the product in a meaningful way.',
-            generationException: 'Something went wrong in the browser during generation. Please try again.'
+            generationException: 'Something went wrong in the browser during generation. Please try again.',
+            cookieRequired: 'Please accept the AI scene preview cookie in the consent banner to use this feature.'
         };
 
         this.translations = { ...defaults };
@@ -197,6 +187,112 @@ export default class AiScenePreviewPlugin extends Plugin {
         this.translations.loadFailed = dataset.errorLoadFailed || this.translations.loadFailed;
         this.translations.generationFailed = dataset.errorGenerationFailed || this.translations.generationFailed;
         this.translations.generationException = dataset.errorGenerationException || this.translations.generationException;
+        this.translations.cookieRequired = dataset.errorCookieRequired || this.translations.cookieRequired;
+    }
+
+    _registerCookieConsentListener() {
+        if (!document || !document.$emitter || typeof document.$emitter.subscribe !== 'function') {
+            return;
+        }
+
+        document.$emitter.subscribe('CookieConfiguration_Update', this._handleCookieConfigurationUpdate.bind(this));
+    }
+
+    _handleCookieConfigurationUpdate(update) {
+        if (update && Object.prototype.hasOwnProperty.call(update, SCENE_PREVIEW_COOKIE_NAME)) {
+            this.hasCookieConsent = update[SCENE_PREVIEW_COOKIE_NAME] === true;
+        } else {
+            this.hasCookieConsent = this._hasCookieConsent();
+        }
+
+        if (this.hasCookieConsent) {
+            this._hideError();
+        }
+    }
+
+    _hasCookieConsent() {
+        return Boolean(this._getCookie(SCENE_PREVIEW_COOKIE_NAME));
+    }
+
+    _checkAutoOpenFromQuery() {
+        if (!this.modal) {
+            return;
+        }
+
+        try {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('openScenePreview') === '1') {
+                this._openModal();
+
+                params.delete('openScenePreview');
+                const newQuery = params.toString();
+                const newUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash}`;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        } catch (error) {
+            console.warn('Failed to process openScenePreview query parameter', error);
+        }
+    }
+
+    _canGenerate() {
+        if (!this.isLoggedIn) {
+            return false;
+        }
+
+        if (!this.hasCookieConsent) {
+            this._showError(this.translations.cookieRequired);
+            return false;
+        }
+
+        return true;
+    }
+
+    _getContextToken() {
+        if (this.contextToken) {
+            return this.contextToken;
+        }
+
+        if (this.modal && this.modal.dataset && this.modal.dataset.contextToken) {
+            this.contextToken = this.modal.dataset.contextToken;
+            return this.contextToken;
+        }
+
+        this.contextToken = this._readContextTokenCookie();
+        return this.contextToken;
+    }
+
+    _readContextTokenCookie() {
+        const match = document.cookie.match(/(?:^|;\s*)sw-context-token=([^;]+)/i);
+        if (!match) {
+            return null;
+        }
+
+        try {
+            return decodeURIComponent(match[1]);
+        } catch (error) {
+            console.warn('Failed to decode context token cookie', error);
+            return match[1];
+        }
+    }
+
+    _setContextToken(token) {
+        if (!token) {
+            return;
+        }
+
+        this.contextToken = token;
+
+        if (this.modal) {
+            this.modal.dataset.contextToken = token;
+        }
+
+        const cookieParts = ['sw-context-token=' + token, 'path=/', 'SameSite=Lax'];
+
+        if (window.location.protocol === 'https:') {
+            cookieParts.push('Secure');
+        }
+
+        document.cookie = cookieParts.join('; ');
     }
 
     _openModal() {
@@ -208,9 +304,16 @@ export default class AiScenePreviewPlugin extends Plugin {
         // Show modal
         const modalInstance = new bootstrap.Modal(this.modal);
         modalInstance.show();
-        
-        // Update counter
-        this._updateGenerationCounter();
+
+        if (!this.hasCookieConsent) {
+            this._showError(this.translations.cookieRequired);
+        } else {
+            this._hideError();
+        }
+
+        if (this.isLoggedIn) {
+            this._updateGenerationCounter();
+        }
     }
 
     _onModalHidden(event) {
@@ -276,6 +379,10 @@ export default class AiScenePreviewPlugin extends Plugin {
         if (!this._isDropZone(event.target)) return;
         
         event.preventDefault();
+
+        if (!this._canGenerate()) {
+            return;
+        }
         
         const position = this._calculateDropPosition(event);
         if (position) {
@@ -285,6 +392,11 @@ export default class AiScenePreviewPlugin extends Plugin {
 
     _handleSceneClick(event) {
         if (!this._isDropZone(event.target)) return;
+
+        if (!this._canGenerate()) {
+            return;
+        }
+
         if (this.generationsRemainingCount <= 0) {
             this._showError(this.translations.sessionLimit);
             return;
@@ -298,6 +410,10 @@ export default class AiScenePreviewPlugin extends Plugin {
 
     _handleTouchStart(event) {
         if (!this._isProductDraggable(event.target)) return;
+
+        if (!this._canGenerate()) {
+            return;
+        }
         
         event.preventDefault();
         this.isTouchDragging = true;
@@ -355,6 +471,10 @@ export default class AiScenePreviewPlugin extends Plugin {
     }
 
     async _generateComposite(position) {
+        if (!this._canGenerate()) {
+            return;
+        }
+
         if (this.generationsRemainingCount <= 0) {
             this._showError(this.translations.sessionLimit);
             return;
@@ -451,6 +571,10 @@ export default class AiScenePreviewPlugin extends Plugin {
     }
 
     async _checkSessionStatus() {
+        if (!this.isLoggedIn) {
+            return;
+        }
+
         try {
             console.log('Checking session status with authenticated request...');
             const result = await this._makeAuthenticatedRequest(
@@ -700,8 +824,7 @@ export default class AiScenePreviewPlugin extends Plugin {
                 xhr.addEventListener('loadend', () => {
                     const headerToken = xhr.getResponseHeader('sw-context-token');
                     if (headerToken) {
-                        // Persist token in cookie for subsequent requests
-                        document.cookie = `sw-context-token=${headerToken}; Path=/; SameSite=Lax`;
+                        this._setContextToken(headerToken);
                         resolve(headerToken);
                     } else {
                         resolve(null);
@@ -717,6 +840,10 @@ export default class AiScenePreviewPlugin extends Plugin {
     }
 
     async _makeAuthenticatedRequest(url, method = 'GET', data = null, retryCount = 0) {
+        if (!this.isLoggedIn) {
+            throw new Error('Login required');
+        }
+
         await this._ensureContextToken();
 
         const options = {
@@ -762,7 +889,7 @@ export default class AiScenePreviewPlugin extends Plugin {
                 return this._makeAuthenticatedRequest(url, method, data, retryCount + 1);
             }
 
-            const errorMessage = parsedResult?.error || `HTTP ${response.status} error`;
+            const errorMessage = (parsedResult && parsedResult.error) || `HTTP ${response.status} error`;
             throw new Error(errorMessage);
         } catch (error) {
             if (retryCount === 0 && error instanceof SyntaxError) {

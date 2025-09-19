@@ -14,13 +14,13 @@
         <license>MIT</license>
     </meta>
     <setup>
-        <registrationUrl>https://apps.flinkfactory.com/app/lifecycle/register</registrationUrl>
+        <registrationUrl>https://apps.flinkfactory.com/ai-scene-preview/app/lifecycle/register</registrationUrl>
         <secret>TestSecret</secret>
     </setup>
     <webhooks>
-        <webhook name="appActivated" url="https://apps.flinkfactory.com/app/lifecycle/activate" event="app.activated"/>
-        <webhook name="appDeactivated" url="https://apps.flinkfactory.com/app/lifecycle/deactivate" event="app.deactivated"/>
-        <webhook name="appDeleted" url="https://apps.flinkfactory.com/app/lifecycle/delete" event="app.deleted"/>
+        <webhook name="appActivated" url="https://apps.flinkfactory.com/ai-scene-preview/app/lifecycle/activate" event="app.activated"/>
+        <webhook name="appDeactivated" url="https://apps.flinkfactory.com/ai-scene-preview/app/lifecycle/deactivate" event="app.deactivated"/>
+        <webhook name="appDeleted" url="https://apps.flinkfactory.com/ai-scene-preview/app/lifecycle/delete" event="app.deleted"/>
     </webhooks>
     <permissions>
         <read>product</read>

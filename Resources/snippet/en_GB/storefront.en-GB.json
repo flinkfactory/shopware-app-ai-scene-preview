@@ -48,7 +48,24 @@
             "networkError": "Network error occurred. Please try again.",
             "unknownError": "An unknown error occurred. Please try again.",
             "loadFailed": "Failed to load image. Please try again.",
-            "generationException": "Something went wrong in the browser during generation. Please try again."
+            "generationException": "Something went wrong in the browser during generation. Please try again.",
+            "cookieRequired": "Please accept the AI product preview cookie in the consent banner to use this feature."
+        },
+        "login": {
+            "title": "Sign in to continue",
+            "description": "Log in to your customer account to generate AI scene previews.",
+            "emailLabel": "Email address",
+            "passwordLabel": "Password",
+            "submit": "Log in",
+            "forgotPassword": "Forgot your password?",
+            "error": "Login failed. Please check your credentials and try again.",
+            "success": "You are now logged in. You can continue with the scene preview.",
+            "noAccount": "Don't have an account yet?",
+            "registerCta": "Create an account"
+        },
+        "cookie": {
+            "name": "AI Product Preview",
+            "description": "Uses Google's Gemini API to create product previews using your photos."
         }
     }
 }
