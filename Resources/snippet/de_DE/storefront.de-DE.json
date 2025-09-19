@@ -1,38 +1,54 @@
 {
     "ai-scene-preview": {
         "button": {
-            "previewInRoom": "In Ihrem Raum vorschauen"
+            "previewInRoom": "An deinem Wunschort anschauen"
         },
         "modal": {
-            "title": "KI Szenen-Vorschau",
+            "title": "An deinem Wunschort anschauen",
             "product": "Produkt",
             "scene": "Szene",
             "close": "Schließen",
             "generationsRemaining": "Generierungen verbleibend",
-            "uploadScene": "Laden Sie Ihr Raumfoto hoch",
-            "uploadInstruction": "Wählen Sie ein Foto Ihres Raums, in dem Sie dieses Produkt sehen möchten. Für beste Ergebnisse verwenden Sie gute Beleuchtung und eine klare Sicht.",
+            "generationsInfoLow": "Nur noch %count% Generierungen für heute. Das Limit wird um Mitternacht zurückgesetzt.",
+            "generationsInfoNone": "Für heute sind keine Generierungen mehr verfügbar. Bitte versuche es morgen erneut.",
+            "uploadScene": "Lade dein Raumfoto hoch",
+            "uploadInstruction": "Wähle ein Foto deines Raums, in dem du dieses Produkt sehen möchtest. Für beste Ergebnisse verwende gute Beleuchtung und eine klare Sicht.",
             "selectImage": "Bild auswählen",
             "changeScene": "Szene ändern",
             "showDebug": "Debug-Info anzeigen",
-            "dragInstruction": "Ziehen Sie mich in die Szene oder tippen Sie, wo Sie mich haben möchten!",
-            "instructions": "Ziehen Sie das Produkt dorthin, wo es in der Szene platziert werden soll, oder klicken Sie einfach auf die gewünschte Stelle.",
-            "analyzing": "Analysiere Ihr Produkt...",
+            "dragInstruction": "Zieh mich in die Szene oder tippe, wo du mich haben möchtest!",
+            "instructions": "Klicke auf die gewünschte Stelle, wo das Produkt in der Szene platziert werden soll.",
+            "analyzing": "Analysiere dein Produkt...",
             "generating": "Generiere...",
-            "limitReached": "Sie haben das Generierungslimit für diese Sitzung erreicht. Bitte laden Sie die Seite neu, um eine neue Sitzung zu starten."
+            "limitReached": "Du hast das Generierungslimit für diese Sitzung erreicht. Bitte lade die Seite neu, um eine neue Sitzung zu starten.",
+            "productImageAlt": "Produktbild Platzhalter für die KI Vorschau",
+            "sceneImageAlt": "Vorschau des hochgeladenen Szenenbilds",
+            "touchGhostAlt": "Vorschauhilfe zum Ziehen des Produkts"
         },
         "debug": {
             "title": "Debug-Informationen",
             "markedImage": "Markiertes Szenenbild",
-            "prompt": "Generierungs-Prompt"
+            "prompt": "Generierungs-Prompt",
+            "markedImageAlt": "Szenenbild mit markierter Platzierungsposition"
+        },
+        "loading": {
+            "analyzing": "Analysiere dein Produkt...",
+            "surveying": "Erfasse die Szene...",
+            "describing": "Beschreibe den Platzierungsort mit KI...",
+            "prompting": "Formuliere den perfekten Prompt...",
+            "generating": "Erzeuge fotorealistische Optionen...",
+            "assembling": "Setze die finale Szene zusammen..."
         },
         "error": {
-            "noImage": "Bitte laden Sie zuerst ein Bild hoch",
-            "invalidImage": "Bitte wählen Sie eine gültige Bilddatei",
+            "noImage": "Bitte lade zuerst ein Bild hoch",
+            "invalidImage": "Bitte wähle eine gültige Bilddatei",
             "uploadFailed": "Fehler beim Hochladen des Bildes",
-            "generationFailed": "Fehler beim Generieren der Vorschau",
+            "generationFailed": "Wir konnten das Produkt nicht sinnvoll in deiner Szene platzieren. Bitte versuche es erneut. Achte darauf, dass das Szenenbild ausreichend freien Platz bietet, damit das Produkt passend eingefügt werden kann.",
             "sessionLimit": "Generierungslimit für diese Sitzung erreicht",
-            "networkError": "Netzwerkfehler aufgetreten. Bitte versuchen Sie es erneut.",
-            "unknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+            "networkError": "Netzwerkfehler aufgetreten. Bitte versuche es erneut.",
+            "unknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuche es erneut.",
+            "loadFailed": "Das Bild konnte nicht geladen werden. Bitte versuche es erneut.",
+            "generationException": "Im Browser ist während der Generierung ein Fehler aufgetreten. Bitte versuche es erneut."
         }
     }
 }

@@ -1,11 +1,31 @@
 {# AI Scene Preview Modal #}
+{% set isLoggedIn = context.customer is not null %}
 <div class="modal fade"
      id="aiScenePreviewModal"
      tabindex="-1"
      role="dialog"
      aria-labelledby="aiScenePreviewModalLabel"
      aria-hidden="true"
-     data-ai-scene-preview-modal>
+     data-ai-scene-preview-modal
+     data-customer-logged-in="{{ isLoggedIn ? 'true' : 'false' }}"
+     data-context-token="{{ context.token|e('html_attr') }}"
+     data-login-error-default="{{ 'ai-scene-preview.login.error'|trans|e('html_attr') }}"
+     data-login-success-message="{{ 'ai-scene-preview.login.success'|trans|e('html_attr') }}"
+     data-login-endpoint="/store-api/account/login"
+     data-loading-messages='{{ [
+         "ai-scene-preview.loading.analyzing"|trans,
+         "ai-scene-preview.loading.surveying"|trans,
+         "ai-scene-preview.loading.describing"|trans,
+         "ai-scene-preview.loading.prompting"|trans,
+         "ai-scene-preview.loading.generating"|trans,
+         "ai-scene-preview.loading.assembling"|trans
+     ]|json_encode|e('html_attr') }}'
+     data-error-invalid-image="{{ 'ai-scene-preview.error.invalidImage'|trans|e('html_attr') }}"
+     data-error-no-image="{{ 'ai-scene-preview.error.noImage'|trans|e('html_attr') }}"
+     data-error-session-limit="{{ 'ai-scene-preview.error.sessionLimit'|trans|e('html_attr') }}"
+     data-error-load-failed="{{ 'ai-scene-preview.error.loadFailed'|trans|e('html_attr') }}"
+     data-error-generation-failed="{{ 'ai-scene-preview.error.generationFailed'|trans|e('html_attr') }}"
+     data-error-generation-exception="{{ 'ai-scene-preview.error.generationException'|trans|e('html_attr') }}">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -16,11 +36,62 @@
             </div>
             
             <div class="modal-body">
+
+<div class="ai-scene-preview-login mb-4{{ isLoggedIn ? ' d-none' : '' }}" data-login-container>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">{{ "ai-scene-preview.login.title"|trans }}</h5>
+            <p class="card-text text-muted">{{ "ai-scene-preview.login.description"|trans }}</p>
+            <form class="row g-3" data-login-form novalidate>
+                <div class="col-12">
+                    <label for="ai-scene-login-email" class="form-label">{{ "ai-scene-preview.login.emailLabel"|trans }}</label>
+                    <input type="email"
+                           class="form-control"
+                           id="ai-scene-login-email"
+                           name="username"
+                           autocomplete="email"
+                           required>
+                </div>
+                <div class="col-12">
+                    <label for="ai-scene-login-password" class="form-label">{{ "ai-scene-preview.login.passwordLabel"|trans }}</label>
+                    <input type="password"
+                           class="form-control"
+                           id="ai-scene-login-password"
+                           name="password"
+                           autocomplete="current-password"
+                           required>
+                </div>
+                <div class="col-12 d-flex align-items-center">
+                    <button type="submit" class="btn btn-primary me-3" data-login-submit>
+                        <span data-login-submit-text>{{ "ai-scene-preview.login.submit"|trans }}</span>
+                        <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true" data-login-spinner></span>
+                    </button>
+                    <a href="{{ path('frontend.account.recover.page') }}" class="small">{{ "ai-scene-preview.login.forgotPassword"|trans }}</a>
+                </div>
+                <div class="col-12">
+                    <div class="alert alert-danger d-none" role="alert" data-login-error></div>
+                    <div class="alert alert-success d-none" role="alert" data-login-success></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+                <div class="ai-scene-preview-content-wrapper{{ isLoggedIn ? '' : ' d-none' }}" data-content-container>
                 {# Generation Counter #}
-                <div class="ai-scene-preview-counter mb-3 d-none">
-                    <div class="alert alert-info d-flex align-items-center text-white" role="alert">
+                <div class="ai-scene-preview-counter mb-3 d-none" data-generations-counter>
+                    <div class="alert alert-info d-flex align-items-start text-white p-2"
+                         role="alert"
+                         data-generations-alert
+                         data-template-low="{{ 'ai-scene-preview.modal.generationsInfoLow'|trans|e('html_attr') }}"
+                         data-template-none="{{ 'ai-scene-preview.modal.generationsInfoNone'|trans|e('html_attr') }}">
                         {% sw_icon 'info' style { size: 'sm'} %}
-                        <strong data-generations-remaining class="me-1">{{ config('FlinkAiScenePreview.config.maxGenerationsPerSession') }}</strong> {{ "ai-scene-preview.modal.generationsRemaining"|trans }}
+                        <div class="ms-2">
+                            <div class="fw-bold">
+                                <strong data-generations-remaining class="me-1">{{ config('FlinkAiScenePreviewApp.config.maxGenerationsPerSession') }}</strong>
+                                {{ "ai-scene-preview.modal.generationsRemaining"|trans }}
+                            </div>
+                            <small class="d-block" data-generations-message></small>
+                        </div>
                     </div>
                 </div>
 
@@ -31,7 +102,7 @@
                         <div class="col-md-3 col-lg-2">
                             <h6 class="mb-3">{{ "ai-scene-preview.modal.product"|trans }}</h6>
                             <div class="ai-scene-product-card" data-product-display draggable="true" style="cursor: move;">
-                                <img src="" alt="" class="img-fluid" data-product-image>
+                                <img src="" alt="{{ "ai-scene-preview.modal.productImageAlt"|trans }}" class="img-fluid" data-product-image>
                                 <p class="mt-2 text-center small mb-0" data-product-name></p>
                             </div>
                         </div>
@@ -69,7 +140,7 @@
                                 <div class="preview-container"
                                      data-dropzone="true"
                                      data-scene-dropzone>
-                                    <img src="" alt="" class="img-fluid" data-scene-image>
+                                    <img src="" alt="{{ "ai-scene-preview.modal.sceneImageAlt"|trans }}" class="img-fluid" data-scene-image>
                                     
                                     {# Placement Orb #}
                                     <div class="placement-orb d-none" data-placement-orb>
@@ -124,11 +195,12 @@
 
                 {# Touch Ghost for Mobile #}
                 <div class="ai-scene-touch-ghost d-none" data-touch-ghost>
-                    <img src="" alt="" class="touch-ghost-image">
+                    <img src="" alt="{{ "ai-scene-preview.modal.touchGhostAlt"|trans }}" class="touch-ghost-image">
                 </div>
             </div>
+        </div>
 
-            <div class="modal-footer">
+        <div class="modal-footer" data-login-dependent-footer>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     {{ "ai-scene-preview.modal.close"|trans }}
                 </button>
@@ -158,7 +230,7 @@
             
             <div class="modal-body">
                 <h6>{{ "ai-scene-preview.debug.markedImage"|trans }}</h6>
-                <img src="" alt="" class="img-fluid mb-3" data-debug-image>
+                <img src="" alt="{{ "ai-scene-preview.debug.markedImageAlt"|trans }}" class="img-fluid mb-3" data-debug-image>
                 
                 <h6>{{ "ai-scene-preview.debug.prompt"|trans }}</h6>
                 <pre class="bg-light p-3" data-debug-prompt></pre>

@@ -3,9 +3,8 @@
 {% block page_product_detail_media %}
     {{ parent() }}
     
-    {# Check if feature is enabled globally and for this product #}
-    {% set isEnabled = config('FlinkAiScenePreviewApp.config.enabled') and page.product.customFields.flink_ai_scene_preview_enabled|default(false) %}
-    
+    {% set isEnabled = page.product.customFields.flink_ai_scene_preview_enabled|default(false) %}
+
     {% if isEnabled %}
         {# Resolve product image from custom field if available #}
         {% set productImage = null %}
@@ -42,11 +41,10 @@
 {% block base_script_router %}
     {{ parent() }}
     
-    {# Check if feature is enabled globally and for this product #}
-    {% set isEnabled = config('FlinkAiScenePreviewApp.config.enabled') and page.product.customFields.flink_ai_scene_preview_enabled|default(false) %}
-    
+    {% set isEnabled = page.product.customFields.flink_ai_scene_preview_enabled|default(false) %}
+
     {% if isEnabled %}
         {# Include AI Scene Preview modal #}
-        {% sw_include '@FlinkAiScenePreview/storefront/component/ai-scene-preview-modal.html.twig' %}
+        {% sw_include '@FlinkAiScenePreviewApp/storefront/component/ai-scene-preview-modal.html.twig' %}
     {% endif %}
 {% endblock %}

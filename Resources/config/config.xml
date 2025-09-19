@@ -6,36 +6,6 @@
         <title>General Settings</title>
         <title lang="de-DE">Allgemeine Einstellungen</title>
 
-        <input-field type="bool">
-            <name>enabled</name>
-            <label>Enable AI Scene Preview</label>
-            <label lang="de-DE">KI Szenen-Vorschau aktivieren</label>
-            <helpText>Enable or disable the AI scene preview feature globally</helpText>
-            <helpText lang="de-DE">Aktiviert oder deaktiviert die KI Szenen-Vorschau global</helpText>
-            <defaultValue>true</defaultValue>
-        </input-field>
-
-        <input-field type="single-select">
-            <name>apiProvider</name>
-            <label>API Provider</label>
-            <label lang="de-DE">API-Anbieter</label>
-            <helpText>Currently Google does not offer the necessary model in their API yet, so we are using OpenRouter for the time being.</helpText>
-            <helpText lang="de-DE">Aktuell bietet Google den Zugriff zum nötigen Modell noch nicht über die API an, daher nutzen wir bis dahin OpenRouter</helpText>
-            <options>
-                <option>
-                    <id>openrouter</id>
-                    <name>OpenRouter</name>
-                    <name lang="de-DE">OpenRouter</name>
-                </option>
-                <option>
-                    <id>google</id>
-                    <name>Google Gemini (Direct)</name>
-                    <name lang="de-DE">Google Gemini (Direkt)</name>
-                </option>
-            </options>
-            <defaultValue>openrouter</defaultValue>
-        </input-field>
-
         <input-field type="int">
             <name>maxGenerationsPerSession</name>
             <label>Max generations per session</label>
@@ -56,61 +26,6 @@
             <defaultValue>1024</defaultValue>
             <min>512</min>
             <max>2048</max>
-        </input-field>
-
-        <input-field type="int">
-            <name>apiTimeout</name>
-            <label>API timeout (seconds)</label>
-            <label lang="de-DE">API-Timeout (Sekunden)</label>
-            <helpText>Maximum time to wait for AI generation response</helpText>
-            <helpText lang="de-DE">Maximale Wartezeit für KI-Generierungsantwort</helpText>
-            <defaultValue>30</defaultValue>
-            <min>10</min>
-            <max>120</max>
-        </input-field>
-    </card>
-
-    <card>
-        <title>OpenRouter API Settings</title>
-        <title lang="de-DE">OpenRouter API Einstellungen</title>
-        <input-field type="text">
-            <name>openRouterModelName</name>
-            <label>AI Model</label>
-            <label lang="de-DE">KI-Modell</label>
-            <helpText>Model to use for image generation (e.g., google/gemini-2.5-flash-image-preview for OpenRouter)</helpText>
-            <helpText lang="de-DE">Modell für die Bildgenerierung (z.B. google/gemini-2.5-flash-image-preview für OpenRouter)</helpText>
-            <defaultValue>google/gemini-2.5-flash-image-preview</defaultValue>
-        </input-field>
-
-        <input-field type="password">
-            <name>openRouterApiKey</name>
-            <label>OpenRouter API Key</label>
-            <label lang="de-DE">OpenRouter API-Schlüssel</label>
-            <helpText>Your OpenRouter API key (required if using OpenRouter provider)</helpText>
-            <helpText lang="de-DE">Ihr OpenRouter API-Schlüssel (erforderlich bei Verwendung von OpenRouter)</helpText>
-        </input-field>
-    </card>
-
-    <card>
-        <title>Google API Settings</title>
-        <title lang="de-DE">Google API Einstellungen</title>
-
-
-        <input-field type="text">
-            <name>googleModelName</name>
-            <label>AI Model</label>
-            <label lang="de-DE">KI-Modell</label>
-            <helpText>Model to use for image generation (e.g., gemini-2.5-flash-image-preview for Google)</helpText>
-            <helpText lang="de-DE">Modell für die Bildgenerierung (z.B. gemini-2.5-flash-image-preview für Google)</helpText>
-            <defaultValue>gemini-2.5-flash-image-preview</defaultValue>
-        </input-field>
-
-        <input-field type="password">
-            <name>geminiApiKey</name>
-            <label>Google Gemini API Key</label>
-            <label lang="de-DE">Google Gemini API-Schlüssel</label>
-            <helpText>Your Google Gemini API key (required if using Google provider)</helpText>
-            <helpText lang="de-DE">Ihr Google Gemini API-Schlüssel (erforderlich bei Verwendung von Google)</helpText>
         </input-field>
     </card>
 

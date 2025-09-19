@@ -1,5 +1,10 @@
 // AI Scene Preview Plugin Styles
 
+.ai-scene-section-title {
+    display: block;
+    font-weight: 600;
+}
+
 .ai-scene-preview-button-wrapper {
     .ai-scene-preview-button {
         position: relative;
@@ -23,10 +28,6 @@
 
 // Modal Styles
 #aiScenePreviewModal {
-    .modal-dialog {
-        max-width: 95vw;
-    }
-    
     .ai-scene-preview-counter {
         .icon {
             margin-right: 0.5rem;
@@ -108,7 +109,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             
             img {
-                max-height: 400px;
                 cursor: crosshair;
             }
             
@@ -173,7 +173,7 @@
     .ai-scene-error-message {
         .alert {
             .icon {
-                margin-right: 0.5rem;
+                margin-right: 1rem;
             }
         }
     }

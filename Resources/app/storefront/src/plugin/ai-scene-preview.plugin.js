@@ -1,14 +1,14 @@
 import Plugin from 'src/plugin-system/plugin.class';
-import HttpClient from 'src/service/http-client.service';
+import AppClient from 'src/service/app-client.service';
+
+// External app server base URL; adjust if the service is deployed elsewhere.
+const FLINK_APP_SERVER_BASE_URL = 'https://apps.flinkfactory.com';
 
 export default class AiScenePreviewPlugin extends Plugin {
     static options = {
-        // Shopware store-api endpoints for JWT token generation
-        tokenUrl: '/store-api/app-system/FlinkAiScenePreviewApp/generate-token',
-        
         // App server endpoints
-        generateUrl: 'http://localhost:8083/api/ai-scene/generate',
-        sessionStatusUrl: 'http://localhost:8083/api/ai-scene/session-status',
+        generateUrl: `${FLINK_APP_SERVER_BASE_URL}/api/ai-scene/generate`,
+        sessionStatusUrl: `${FLINK_APP_SERVER_BASE_URL}/api/ai-scene/session-status`,
         
         // Selectors
         modalSelector: '[data-ai-scene-preview-modal]',
@@ -26,22 +26,34 @@ export default class AiScenePreviewPlugin extends Plugin {
         loadingMessageSelector: '[data-loading-message]',
         errorMessageSelector: '[data-error-message]',
         errorTextSelector: '[data-error-text]',
+        generationsCounterSelector: '[data-generations-counter]',
+        generationsAlertSelector: '[data-generations-alert]',
         generationsRemainingSelector: '[data-generations-remaining]',
+        generationsMessageSelector: '[data-generations-message]',
         changeSceneSelector: '[data-change-scene]',
         debugButtonSelector: '[data-debug-button]',
         touchGhostSelector: '[data-touch-ghost]',
         debugImageSelector: '[data-debug-image]',
-        debugPromptSelector: '[data-debug-prompt]'
+        debugPromptSelector: '[data-debug-prompt]',
+        loginContainerSelector: '[data-login-container]',
+        loginFormSelector: '[data-login-form]',
+        loginErrorSelector: '[data-login-error]',
+        loginSuccessSelector: '[data-login-success]',
+        loginSubmitSelector: '[data-login-submit]',
+        loginSpinnerSelector: '[data-login-spinner]',
+        contentWrapperSelector: '[data-content-container]',
+        footerSelector: '[data-login-dependent-footer]'
     };
 
     init() {
-        this.httpClient = new HttpClient();
+        this.appClient = new AppClient('FlinkAiScenePreviewApp');
 
         this.productId = this.options.productId;
         this.productName = this.options.productName;
         this.productImageUrl = this.options.productImage;
         this.maxGenerations = this.options.maxGenerations;
         this.debugMode = this.options.debugMode;
+        this.accessKey = this.options.accessKey; // Sales channel access key for Store API
 
         this.generationsRemainingCount = this.maxGenerations;
         this.sceneImage = null;
@@ -49,12 +61,12 @@ export default class AiScenePreviewPlugin extends Plugin {
         this.isTouchDragging = false;
         this.touchGhostPosition = null;
         this.debugData = null;
-        
-        // JWT token management
-        this.jwtToken = null;
-        this.tokenStorageKey = 'flink_ai_scene_preview_token';
-        this.tokenExpirationKey = 'flink_ai_scene_preview_token_exp';
-        
+        this.translations = {};
+        this.isLoggedIn = false;
+        this.isLoggingIn = false;
+        this.loginEndpoint = '/store-api/account/login';
+        this.contextToken = null;
+
         this.loadingMessages = [
             'Analyzing your product...',
             'Surveying the scene...',
@@ -67,7 +79,11 @@ export default class AiScenePreviewPlugin extends Plugin {
         
         this._registerEvents();
         this._getElements();
-        this._checkSessionStatus();
+        this._initializeLoginHandling();
+
+        if (this.isLoggedIn) {
+            this._checkSessionStatus();
+        }
     }
 
     _registerEvents() {
@@ -126,11 +142,61 @@ export default class AiScenePreviewPlugin extends Plugin {
         this.loadingMessage = document.querySelector(this.options.loadingMessageSelector);
         this.errorMessage = document.querySelector(this.options.errorMessageSelector);
         this.errorText = document.querySelector(this.options.errorTextSelector);
+        this.generationsCounter = document.querySelector(this.options.generationsCounterSelector);
+        this.generationsAlert = document.querySelector(this.options.generationsAlertSelector);
         this.generationsRemaining = document.querySelector(this.options.generationsRemainingSelector);
+        this.generationsMessage = document.querySelector(this.options.generationsMessageSelector);
         this.debugButton = document.querySelector(this.options.debugButtonSelector);
         this.touchGhost = document.querySelector(this.options.touchGhostSelector);
         this.debugImage = document.querySelector(this.options.debugImageSelector);
         this.debugPrompt = document.querySelector(this.options.debugPromptSelector);
+        this.loginContainer = this.modal ? this.modal.querySelector(this.options.loginContainerSelector) : null;
+        this.loginForm = this.modal ? this.modal.querySelector(this.options.loginFormSelector) : null;
+        this.loginError = this.modal ? this.modal.querySelector(this.options.loginErrorSelector) : null;
+        this.loginSuccess = this.modal ? this.modal.querySelector(this.options.loginSuccessSelector) : null;
+        this.loginSubmit = this.modal ? this.modal.querySelector(this.options.loginSubmitSelector) : null;
+        this.loginSpinner = this.modal ? this.modal.querySelector(this.options.loginSpinnerSelector) : null;
+        this.contentWrapper = this.modal ? this.modal.querySelector(this.options.contentWrapperSelector) : null;
+        this.loginFooter = this.modal ? this.modal.querySelector(this.options.footerSelector) : null;
+
+        this._initializeTranslations();
+    }
+
+    _initializeTranslations() {
+        const defaults = {
+            invalidImage: 'Please select a valid image file.',
+            loadFailed: 'Failed to load image. Please try again.',
+            noImage: 'Please upload an image first.',
+            sessionLimit: 'Generation limit reached for this session.',
+            generationFailed: 'We had problems placing the product in your scene. Please try again. For best results, make sure that the scene image has enough free space available to place the product in a meaningful way.',
+            generationException: 'Something went wrong in the browser during generation. Please try again.'
+        };
+
+        this.translations = { ...defaults };
+
+        if (!this.modal) {
+            return;
+        }
+
+        const { dataset } = this.modal;
+
+        if (dataset.loadingMessages) {
+            try {
+                const messages = JSON.parse(dataset.loadingMessages);
+                if (Array.isArray(messages) && messages.length > 0) {
+                    this.loadingMessages = messages;
+                }
+            } catch (error) {
+                console.warn('Could not parse loading messages dataset', error);
+            }
+        }
+
+        this.translations.invalidImage = dataset.errorInvalidImage || this.translations.invalidImage;
+        this.translations.noImage = dataset.errorNoImage || this.translations.noImage;
+        this.translations.sessionLimit = dataset.errorSessionLimit || this.translations.sessionLimit;
+        this.translations.loadFailed = dataset.errorLoadFailed || this.translations.loadFailed;
+        this.translations.generationFailed = dataset.errorGenerationFailed || this.translations.generationFailed;
+        this.translations.generationException = dataset.errorGenerationException || this.translations.generationException;
     }
 
     _openModal() {
@@ -173,7 +239,7 @@ export default class AiScenePreviewPlugin extends Plugin {
 
     async _handleSceneImageUpload(file) {
         if (!file || !file.type.startsWith('image/')) {
-            this._showError('Please select a valid image file.');
+            this._showError(this.translations.invalidImage);
             return;
         }
 
@@ -187,7 +253,8 @@ export default class AiScenePreviewPlugin extends Plugin {
             
             this._hideError();
         } catch (error) {
-            this._showError('Failed to load image: ' + error.message);
+            console.error('Failed to load image', error);
+            this._showError(this.translations.loadFailed);
         }
     }
 
@@ -219,7 +286,7 @@ export default class AiScenePreviewPlugin extends Plugin {
     _handleSceneClick(event) {
         if (!this._isDropZone(event.target)) return;
         if (this.generationsRemainingCount <= 0) {
-            this._showError('Generation limit reached for this session.');
+            this._showError(this.translations.sessionLimit);
             return;
         }
         
@@ -289,12 +356,12 @@ export default class AiScenePreviewPlugin extends Plugin {
 
     async _generateComposite(position) {
         if (this.generationsRemainingCount <= 0) {
-            this._showError('Generation limit reached for this session.');
+            this._showError(this.translations.sessionLimit);
             return;
         }
 
         if (!this.sceneImageFile) {
-            this._showError('Please upload a scene image first.');
+            this._showError(this.translations.noImage);
             return;
         }
 
@@ -368,7 +435,7 @@ export default class AiScenePreviewPlugin extends Plugin {
                 this._hideError();
             } else {
                 console.log('Generation failed with error:', result.error);
-                this._showError(result.error || 'Server returned failure status.');
+                this._showError(result.error || this.translations.generationFailed);
                 if (result.sessionStatus) {
                     this.generationsRemainingCount = result.sessionStatus.remaining;
                     this._updateGenerationCounter();
@@ -379,7 +446,7 @@ export default class AiScenePreviewPlugin extends Plugin {
             this._stopLoadingMessages();
             this._hideLoadingOverlay();
             this._hidePlacementOrb();
-            this._showError('JavaScript error during generation: ' + error.message);
+            this._showError(this.translations.generationException);
         }
     }
 
@@ -467,9 +534,13 @@ export default class AiScenePreviewPlugin extends Plugin {
     }
 
     _startLoadingMessages() {
+        if (!this.loadingMessage || !this.loadingMessages.length) {
+            return;
+        }
+
         this.currentLoadingMessage = 0;
         this.loadingMessage.textContent = this.loadingMessages[0];
-        
+
         this.loadingInterval = setInterval(() => {
             this.currentLoadingMessage = (this.currentLoadingMessage + 1) % this.loadingMessages.length;
             this.loadingMessage.textContent = this.loadingMessages[this.currentLoadingMessage];
@@ -493,16 +564,50 @@ export default class AiScenePreviewPlugin extends Plugin {
     }
 
     _updateGenerationCounter() {
-        this.generationsRemaining.parentElement.classList.remove('d-none');
-        this.generationsRemaining.textContent = this.generationsRemainingCount;
-        
-        if (this.generationsRemainingCount <= 0) {
-            this.generationsRemaining.parentElement.classList.remove('alert-info');
-            this.generationsRemaining.parentElement.classList.add('alert-warning');
+        if (!this.generationsRemaining || !this.generationsAlert) {
+            return;
         }
 
-        if (this.generationsRemainingCount > 5) {
-            this.generationsRemaining.parentElement.classList.add('d-none');
+        const alertBox = this.generationsAlert;
+        const messageElement = this.generationsMessage;
+        const counterWrapper = this.generationsCounter;
+
+        alertBox.classList.remove('d-none', 'alert-warning', 'alert-info');
+        if (counterWrapper) {
+            counterWrapper.classList.remove('d-none');
+        }
+
+        if (this.generationsRemainingCount >= 5) {
+            alertBox.classList.add('d-none');
+            if (counterWrapper) {
+                counterWrapper.classList.add('d-none');
+            }
+            if (messageElement) {
+                messageElement.textContent = '';
+            }
+            return;
+        }
+
+        const remaining = Math.max(0, parseInt(this.generationsRemainingCount, 10) || 0);
+        this.generationsRemaining.textContent = remaining;
+
+        if (remaining <= 0) {
+            alertBox.classList.add('alert-warning');
+            if (messageElement) {
+                const templateNone = alertBox.dataset.templateNone || '';
+                messageElement.textContent = templateNone;
+            }
+            if (counterWrapper) {
+                counterWrapper.classList.remove('d-none');
+            }
+            return;
+        }
+
+        alertBox.classList.add('alert-info');
+
+        if (messageElement) {
+            const templateLow = alertBox.dataset.templateLow || '';
+            messageElement.textContent = templateLow.replace('%count%', remaining);
         }
     }
 
@@ -572,170 +677,100 @@ export default class AiScenePreviewPlugin extends Plugin {
         return img;
     }
 
-    // JWT Token Management Methods
-    async _ensureValidToken() {
-        // Check if we have a valid token
-        if (this._isTokenValid()) {
-            return this.jwtToken;
-        }
+    _getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
 
-        // Request new token from Shopware
+    async _ensureContextToken() {
+        let token = this._getCookie('sw-context-token');
+        if (token) return token;
+
+        // Create/ensure a store-api context by calling /store-api/context
         try {
-            console.log('Requesting new JWT token from Shopware...');
-            const token = await this._requestNewToken();
-            this._storeToken(token);
-            return token;
-        } catch (error) {
-            console.error('Failed to obtain JWT token:', error);
-            throw new Error('Authentication failed: ' + error.message);
-        }
-    }
-
-    _isTokenValid() {
-        // Check if we have a stored token and it's not expired
-        const storedToken = sessionStorage.getItem(this.tokenStorageKey);
-        const storedExpiration = sessionStorage.getItem(this.tokenExpirationKey);
-
-        if (!storedToken || !storedExpiration) {
-            return false;
-        }
-
-        const expirationTime = parseInt(storedExpiration);
-        const currentTime = Math.floor(Date.now() / 1000);
-        
-        // Add 1 minute buffer to avoid using tokens that are about to expire
-        if (currentTime >= (expirationTime - 60)) {
-            console.log('Token expired or about to expire, need to refresh');
-            return false;
-        }
-
-        this.jwtToken = storedToken;
-        return true;
-    }
-
-    async _requestNewToken() {
-        return new Promise((resolve, reject) => {
-            this.httpClient.post(
-                this.options.tokenUrl,
-                JSON.stringify({}),
-                (responseText, request) => {
-                    console.log('Token request response status:', request.status);
-                    
-                    if (request.status >= 200 && request.status < 300) {
-                        try {
-                            const response = JSON.parse(responseText);
-                            if (response.token) {
-                                console.log('Successfully obtained JWT token');
-                                resolve(response.token);
-                            } else {
-                                reject(new Error('No token in response'));
-                            }
-                        } catch (error) {
-                            console.error('Error parsing token response:', error);
-                            reject(new Error('Failed to parse token response: ' + error.message));
-                        }
+            token = await new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                // In Shopware 6.6, context supports GET (fetch) and PATCH (update)
+                xhr.open('GET', '/store-api/context');
+                if (this.accessKey) {
+                    xhr.setRequestHeader('sw-access-key', this.accessKey);
+                }
+                xhr.addEventListener('loadend', () => {
+                    const headerToken = xhr.getResponseHeader('sw-context-token');
+                    if (headerToken) {
+                        // Persist token in cookie for subsequent requests
+                        document.cookie = `sw-context-token=${headerToken}; Path=/; SameSite=Lax`;
+                        resolve(headerToken);
                     } else {
-                        console.error('Token request failed with status:', request.status);
-                        try {
-                            const errorResponse = JSON.parse(responseText);
-                            reject(new Error(errorResponse.errors?.[0]?.detail || `HTTP ${request.status} error`));
-                        } catch (error) {
-                            reject(new Error(`HTTP ${request.status}: ${responseText}`));
-                        }
+                        resolve(null);
                     }
-                },
-                'application/json'
-            );
-        });
-    }
-
-    _storeToken(token) {
-        // Decode token to get expiration (simple base64 decode of JWT payload)
-        try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            const expirationTime = payload.exp;
-            
-            sessionStorage.setItem(this.tokenStorageKey, token);
-            sessionStorage.setItem(this.tokenExpirationKey, expirationTime.toString());
-            
-            this.jwtToken = token;
-            console.log('Token stored successfully, expires at:', new Date(expirationTime * 1000));
-        } catch (error) {
-            console.error('Failed to decode token:', error);
-            throw new Error('Invalid token format');
+                });
+                xhr.send();
+            });
+        } catch (e) {
+            // ignore, return null
         }
+
+        return token;
     }
 
     async _makeAuthenticatedRequest(url, method = 'GET', data = null, retryCount = 0) {
-        try {
-            // Ensure we have a valid token
-            const token = await this._ensureValidToken();
+        await this._ensureContextToken();
 
-            return new Promise((resolve, reject) => {
-                console.log('Making authenticated request to:', url, 'attempt:', retryCount + 1);
-                
-                if (method === 'GET') {
-                    this.httpClient.get(url, (responseText, request) => {
-                        this._handleAuthenticatedResponse(responseText, request, resolve, reject);
-                    }, 'application/json');
-                } else if (method === 'POST') {
-                    // For POST requests, we need to manually create the XMLHttpRequest to set custom headers
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', url);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-                    
-                    xhr.addEventListener('loadend', () => {
-                        this._handleAuthenticatedResponse(xhr.responseText, xhr, resolve, reject);
-                    });
-                    
-                    xhr.send(data ? JSON.stringify(data) : null);
-                }
-            });
-        } catch (authError) {
-            // If we get an authentication error and haven't retried yet, try once more
-            if (retryCount === 0 && authError.message.includes('Authentication failed')) {
-                console.log('Authentication failed, retrying with fresh token...');
-                // Clear stored token and retry once
-                this._clearStoredToken();
+        const options = {
+            headers: {
+                Accept: 'application/json'
+            }
+        };
+
+        if (method !== 'GET' && data !== null) {
+            options.headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify(data);
+        }
+
+        try {
+            let response;
+
+            switch (method) {
+                case 'GET':
+                    response = await this.appClient.get(url, options);
+                    break;
+                case 'POST':
+                    response = await this.appClient.post(url, options);
+                    break;
+                case 'PATCH':
+                    response = await this.appClient.patch(url, options);
+                    break;
+                case 'DELETE':
+                    response = await this.appClient.delete(url, options);
+                    break;
+                default:
+                    throw new Error(`Unsupported request method: ${method}`);
+            }
+
+            const responseText = await response.text();
+            const parsedResult = responseText ? JSON.parse(responseText) : null;
+
+            if (response.ok) {
+                return parsedResult;
+            }
+
+            if (response.status === 401 && retryCount === 0) {
+                this.appClient.reset();
                 return this._makeAuthenticatedRequest(url, method, data, retryCount + 1);
             }
-            throw authError;
-        }
-    }
 
-    _clearStoredToken() {
-        sessionStorage.removeItem(this.tokenStorageKey);
-        sessionStorage.removeItem(this.tokenExpirationKey);
-        this.jwtToken = null;
-    }
+            const errorMessage = parsedResult?.error || `HTTP ${response.status} error`;
+            throw new Error(errorMessage);
+        } catch (error) {
+            if (retryCount === 0 && error instanceof SyntaxError) {
+                this.appClient.reset();
+                return this._makeAuthenticatedRequest(url, method, data, retryCount + 1);
+            }
 
-    _handleAuthenticatedResponse(responseText, request, resolve, reject) {
-        console.log('Authenticated request response status:', request.status);
-        console.log('Response text length:', responseText ? responseText.length : 0);
-        
-        if (request.status >= 200 && request.status < 300) {
-            try {
-                const parsedResult = JSON.parse(responseText);
-                console.log('Successfully parsed authenticated response, success:', parsedResult.success);
-                resolve(parsedResult);
-            } catch (error) {
-                console.error('Error parsing authenticated response:', error);
-                reject(new Error('Failed to parse server response: ' + error.message));
-            }
-        } else if (request.status === 401) {
-            // Token might be expired, clear stored token
-            console.log('Received 401, clearing stored token');
-            this._clearStoredToken();
-            reject(new Error('Authentication failed - token expired'));
-        } else {
-            console.error('HTTP error status:', request.status);
-            try {
-                const errorResult = JSON.parse(responseText);
-                reject(new Error(errorResult.error || `HTTP ${request.status} error`));
-            } catch (error) {
-                reject(new Error(`HTTP ${request.status}: ${responseText}`));
-            }
+            throw error;
         }
     }
 }

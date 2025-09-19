@@ -3,9 +3,8 @@
 {% block block_gallery_buybox_column_left_inner %}
     {{ parent() }}
 
-    {# Check if feature is enabled globally and for this product #}
-    {% set isEnabled = config('FlinkAiScenePreviewApp.config.enabled') and page.product.customFields.flink_ai_scene_preview_enabled|default(false) %}
-    
+    {% set isEnabled = page.product.customFields.flink_ai_scene_preview_enabled|default(false) %}
+
     {% if isEnabled %}
         {# Resolve product image from custom field if available #}
         {% set productImage = null %}
@@ -29,6 +28,7 @@
             'productImage': productImage,
             'maxGenerations': config('FlinkAiScenePreviewApp.config.maxGenerationsPerSession'),
             'debugMode': config('FlinkAiScenePreviewApp.config.debugMode'),
+            'accessKey': context.salesChannel.accessKey
         } %}
         <div class="ai-scene-preview-button-wrapper mt-3">
             <button type="button"
@@ -40,6 +40,6 @@
             </button>
         </div>
 
-        {% sw_include '@FlinkAiScenePreview/storefront/component/ai-scene-preview-modal.html.twig' %}
+        {% sw_include '@FlinkAiScenePreviewApp/storefront/component/ai-scene-preview-modal.html.twig' %}
     {% endif %}
 {% endblock %}

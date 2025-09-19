@@ -3,10 +3,10 @@
           xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/Framework/App/Manifest/Schema/manifest-3.0.xsd">
     <meta>
         <name>FlinkAiScenePreviewApp</name>
-        <label>FlinkAiScenePreviewApp</label>
-        <label lang="de-DE">FlinkAiScenePreviewApp</label>
-        <description/>
-        <description lang="de-DE"/>
+        <label>AI Product Preview | See products in your own home</label>
+        <label lang="de-DE">KI Produktvorschau | Produkte im eigenen Zuhause sehen</label>
+        <description>Let customers preview products in their own home using AI</description>
+        <description lang="de-DE">Ermöglicht Kunden, Produkte mit KI in ihrem eigenen Zuhause zu visualisieren</description>
         <author>flinkfactory</author>
         <copyright>(c) by flinkfactory</copyright>
         <version>1.0.0</version>
@@ -14,37 +14,42 @@
         <license>MIT</license>
     </meta>
     <setup>
-        <registrationUrl>http://flink_app_server/app/lifecycle/register</registrationUrl>
+        <registrationUrl>https://apps.flinkfactory.com/app/lifecycle/register</registrationUrl>
         <secret>TestSecret</secret>
     </setup>
     <webhooks>
-        <webhook name="appActivated" url="http://flink_app_server/app/lifecycle/activate" event="app.activated"/>
-        <webhook name="appDeactivated" url="http://flink_app_server/app/lifecycle/deactivate" event="app.deactivated"/>
-        <webhook name="appDeleted" url="http://flink_app_server/app/lifecycle/delete" event="app.deleted"/>
+        <webhook name="appActivated" url="https://apps.flinkfactory.com/app/lifecycle/activate" event="app.activated"/>
+        <webhook name="appDeactivated" url="https://apps.flinkfactory.com/app/lifecycle/deactivate" event="app.deactivated"/>
+        <webhook name="appDeleted" url="https://apps.flinkfactory.com/app/lifecycle/delete" event="app.deleted"/>
     </webhooks>
+    <permissions>
+        <read>product</read>
+        <read>media</read>
+        <read>system_config</read>
+    </permissions>
     <custom-fields>
         <custom-field-set>
             <name>flink_ai_scene_preview</name>
             <label>AI Scene Preview</label>
-            <label lang="de-DE">KI Szenen-Vorschau</label>
+            <label lang="de-DE">KI Szenenvorschau</label>
             <related-entities>
                 <product/>
             </related-entities>
             <fields>
                 <bool name="flink_ai_scene_preview_enabled">
                     <label>Enable AI product scene generation</label>
-                    <label lang="de-DE">KI-Produktszenen-Generierung aktivieren</label>
+                    <label lang="de-DE">KI-Produktszene aktivieren</label>
                     <help-text>Allow customers to preview this product in their own room using AI</help-text>
-                    <help-text lang="de-DE">Ermöglicht Kunden, dieses Produkt mit KI in ihrem eigenen Raum zu visualisieren</help-text>
+                    <help-text lang="de-DE">Ermöglicht Kundinnen und Kunden, dieses Produkt mithilfe von KI im eigenen Raum zu visualisieren</help-text>
                     <position>1</position>
                 </bool>
-                <text name="flink_ai_scene_preview_image">
+                <media-selection name="flink_ai_scene_preview_image">
                     <label>Front view of product</label>
                     <label lang="de-DE">Frontansicht des Produkts</label>
-                    <help-text>Upload a clean front view of the product (ideally with white background) for best AI results</help-text>
-                    <help-text lang="de-DE">Laden Sie eine saubere Frontansicht des Produkts (idealerweise mit weißem Hintergrund) für beste KI-Ergebnisse hoch</help-text>
+                    <help-text>Upload a clean front view of the product (ideally on a white background) for best AI results</help-text>
+                    <help-text lang="de-DE">Laden Sie für bestmögliche KI-Ergebnisse eine saubere Frontansicht des Produkts (idealerweise mit weißem Hintergrund) hoch</help-text>
                     <position>2</position>
-                </text>
+                </media-selection>
             </fields>
         </custom-field-set>
     </custom-fields>

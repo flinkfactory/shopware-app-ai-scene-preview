@@ -1,38 +1,54 @@
 {
     "ai-scene-preview": {
         "button": {
-            "previewInRoom": "Preview in your room"
+            "previewInRoom": "Preview in your home"
         },
         "modal": {
-            "title": "AI Scene Preview",
+            "title": "Preview in your home",
             "product": "Product",
             "scene": "Scene",
             "close": "Close",
             "generationsRemaining": "generations remaining",
+            "generationsInfoLow": "Only %count% generations left today. The limit resets at midnight.",
+            "generationsInfoNone": "No more generations left today. Please try again tomorrow.",
             "uploadScene": "Upload your room photo",
             "uploadInstruction": "Choose a photo of your room where you'd like to see this product. For best results, use good lighting and a clear view.",
             "selectImage": "Select Image",
             "changeScene": "Change Scene",
             "showDebug": "Show Debug Info",
             "dragInstruction": "Drag me to the scene or tap where you want me!",
-            "instructions": "Drag the product to where you want it placed in the scene, or simply click on the desired location.",
+            "instructions": "Click on the desired location on your image to indicate where you want the product placed.",
             "analyzing": "Analyzing your product...",
             "generating": "Generating...",
-            "limitReached": "You've reached the generation limit for this session. Please refresh the page to start a new session."
+            "limitReached": "You've reached the generation limit for this session. Please refresh the page to start a new session.",
+            "productImageAlt": "Product image preview placeholder",
+            "sceneImageAlt": "Customer scene image preview",
+            "touchGhostAlt": "Product drag helper preview"
         },
         "debug": {
             "title": "Debug Information",
             "markedImage": "Marked Scene Image",
-            "prompt": "Generation Prompt"
+            "prompt": "Generation Prompt",
+            "markedImageAlt": "Scene image with highlighted placement marker"
+        },
+        "loading": {
+            "analyzing": "Analyzing your product...",
+            "surveying": "Surveying the scene...",
+            "describing": "Describing placement location with AI...",
+            "prompting": "Crafting the perfect composition prompt...",
+            "generating": "Generating photorealistic options...",
+            "assembling": "Assembling the final scene..."
         },
         "error": {
             "noImage": "Please upload an image first",
             "invalidImage": "Please select a valid image file",
             "uploadFailed": "Failed to upload image",
-            "generationFailed": "Failed to generate preview",
+            "generationFailed": "We had problems placing the product in your scene. Please try again. For best results, make sure that the scene image has enough free space available to place the product in a meaningful way.",
             "sessionLimit": "Generation limit reached for this session",
             "networkError": "Network error occurred. Please try again.",
-            "unknownError": "An unknown error occurred. Please try again."
+            "unknownError": "An unknown error occurred. Please try again.",
+            "loadFailed": "Failed to load image. Please try again.",
+            "generationException": "Something went wrong in the browser during generation. Please try again."
         }
     }
 }
