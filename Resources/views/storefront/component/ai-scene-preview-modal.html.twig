@@ -33,60 +33,57 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="aiScenePreviewModalLabel">
+                <p class="modal-title h5" id="aiScenePreviewModalLabel">
                     {{ "ai-scene-preview.modal.title"|trans }}
-                </h5>
+                </p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             <div class="modal-body">
-                <div class="ai-scene-preview-login mb-4{{ isLoggedIn ? ' d-none' : '' }}">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ "ai-scene-preview.login.title"|trans }}</h5>
-                            <p class="card-text text-muted">{{ "ai-scene-preview.login.description"|trans }}</p>
+                <div class="ai-scene-preview-login mb-4{{ isLoggedIn ? ' d-none' : ' row' }}">
+                    <div class="col col-md-8 col-lg-6 mx-auto">
+                        <p class="card-title h6">{{ "ai-scene-preview.login.title"|trans }}</p>
+                        <p class="card-text text-muted">{{ "ai-scene-preview.login.description"|trans }}</p>
 
-                            <form class="row g-3"
-                                  method="post"
-                                  action="{{ path('frontend.account.login') }}">
-                                <input type="hidden" name="redirectTo" value="frontend.detail.page">
-                                <input type="hidden" name="redirectParameters" value="{{ redirectParametersJson|e('html_attr') }}">
+                        <form class="row g-3"
+                              method="post"
+                              action="{{ path('frontend.account.login') }}">
+                            <input type="hidden" name="redirectTo" value="frontend.detail.page">
+                            <input type="hidden" name="redirectParameters" value="{{ redirectParametersJson|e('html_attr') }}">
 
-                                <div class="col-12">
-                                    <label for="ai-scene-login-email" class="form-label">{{ "ai-scene-preview.login.emailLabel"|trans }}</label>
-                                    <input type="email"
-                                           class="form-control"
-                                           id="ai-scene-login-email"
-                                           name="username"
-                                           autocomplete="email"
-                                           required>
-                                </div>
+                            <div class="col-12">
+                                <label for="ai-scene-login-email" class="form-label">{{ "ai-scene-preview.login.emailLabel"|trans }}</label>
+                                <input type="email"
+                                       class="form-control"
+                                       id="ai-scene-login-email"
+                                       name="username"
+                                       autocomplete="email"
+                                       required>
+                            </div>
 
-                                <div class="col-12">
-                                    <label for="ai-scene-login-password" class="form-label">{{ "ai-scene-preview.login.passwordLabel"|trans }}</label>
-                                    <input type="password"
-                                           class="form-control"
-                                           id="ai-scene-login-password"
-                                           name="password"
-                                           autocomplete="current-password"
-                                           required>
-                                </div>
+                            <div class="col-12">
+                                <label for="ai-scene-login-password" class="form-label">{{ "ai-scene-preview.login.passwordLabel"|trans }}</label>
+                                <input type="password"
+                                       class="form-control"
+                                       id="ai-scene-login-password"
+                                       name="password"
+                                       autocomplete="current-password"
+                                       required>
+                            </div>
 
-                                <div class="col-12 d-flex flex-column flex-sm-row align-items-sm-center gap-2">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ "ai-scene-preview.login.submit"|trans }}
-                                    </button>
-                                    <a href="{{ path('frontend.account.recover.page') }}" class="small ms-sm-3">{{ "ai-scene-preview.login.forgotPassword"|trans }}</a>
-                                </div>
-
-                                <div class="col-12 d-flex flex-column flex-sm-row align-items-sm-center gap-2">
-                                    <span class="small text-muted">{{ "ai-scene-preview.login.noAccount"|trans }}</span>
-                                    <a class="btn btn-outline-secondary" href="{{ registerUrl }}">
-                                        {{ "ai-scene-preview.login.registerCta"|trans }}
-                                    </a>
-                                </div>
-                            </form>
-                        </div>
+                            <div class="col-12 d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    {{ "ai-scene-preview.login.submit"|trans }}
+                                </button>
+                                <a href="{{ path('frontend.account.recover.page') }}" class="small ms-sm-3">{{ "ai-scene-preview.login.forgotPassword"|trans }}</a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col col-md-4 col-lg-6 mx-auto d-flex justify-content-center align-items-center flex-column text-center">
+                        <p><span class="small text-muted">{{ "ai-scene-preview.login.noAccount"|trans }}</span></p>
+                        <a class="btn btn-outline-secondary" href="{{ registerUrl }}">
+                            {{ "ai-scene-preview.login.registerCta"|trans }}
+                        </a>
                     </div>
                 </div>
 
@@ -137,7 +134,7 @@
                                     <label for="sceneImageInput" class="upload-label">
                                         <div class="text-center p-5">
                                             {% sw_icon 'cloud-upload' style { size:'xs' } %}
-                                            <h5>{{ "ai-scene-preview.modal.uploadScene"|trans }}</h5>
+                                            <p class="h5">{{ "ai-scene-preview.modal.uploadScene"|trans }}</p>
                                             <p class="text-muted">
                                                 {{ "ai-scene-preview.modal.uploadInstruction"|trans }}
                                             </p>
@@ -234,9 +231,9 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="aiSceneDebugModalLabel">
+                <p class="modal-title h5" id="aiSceneDebugModalLabel">
                     {{ "ai-scene-preview.debug.title"|trans }}
-                </h5>
+                </p>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
