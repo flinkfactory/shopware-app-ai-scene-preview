@@ -34,7 +34,7 @@
             <button type="button"
                     class="btn btn-primary btn-block ai-scene-preview-button"
                     data-ai-scene-preview-trigger="true"
-                    data-ai-scene-preview-options='{{ options|json_encode }}'>
+                    data-ai-scene-preview-options='{{ options|json_encode|e('html_attr') }}'>
                 {% sw_icon 'eye-open' style { size: 'xs'} %}
                 {{ "ai-scene-preview.button.previewInRoom"|trans }}
             </button>

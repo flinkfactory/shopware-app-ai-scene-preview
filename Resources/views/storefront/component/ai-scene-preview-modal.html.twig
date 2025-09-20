@@ -75,13 +75,13 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ "ai-scene-preview.login.submit"|trans }}
                                 </button>
-                                <a href="{{ path('frontend.account.recover.page') }}" class="small ms-sm-3">{{ "ai-scene-preview.login.forgotPassword"|trans }}</a>
+                                <a href="{{ path('frontend.account.recover.page') }}" class="small ms-sm-3" title="{{ "ai-scene-preview.login.forgotPassword"|trans }}">{{ "ai-scene-preview.login.forgotPassword"|trans }}</a>
                             </div>
                         </form>
                     </div>
                     <div class="col col-md-4 col-lg-6 mx-auto d-flex justify-content-center align-items-center flex-column text-center">
                         <p><span class="small text-muted">{{ "ai-scene-preview.login.noAccount"|trans }}</span></p>
-                        <a class="btn btn-outline-secondary" href="{{ registerUrl }}">
+                        <a class="btn btn-outline-secondary" href="{{ registerUrl }}" title="{{ "ai-scene-preview.login.registerCta"|trans }}">
                             {{ "ai-scene-preview.login.registerCta"|trans }}
                         </a>
                     </div>
@@ -111,8 +111,8 @@
                         <div class="row">
                         {# Product Column #}
                         <div class="col-md-3 col-lg-2">
-                            <h6 class="mb-3">{{ "ai-scene-preview.modal.product"|trans }}</h6>
-                            <div class="ai-scene-product-card" data-product-display draggable="true" style="cursor: move;">
+                            <p class="mb-3 h6">{{ "ai-scene-preview.modal.product"|trans }}</p>
+                            <div class="ai-scene-product-card" data-product-display draggable="true">
                                 <img src="" alt="{{ "ai-scene-preview.modal.productImageAlt"|trans }}" class="img-fluid" data-product-image>
                                 <p class="mt-2 text-center small mb-0" data-product-name></p>
                             </div>
@@ -120,7 +120,7 @@
 
                         {# Scene Column #}
                         <div class="col-md-9 col-lg-10">
-                            <h6 class="mb-3">{{ "ai-scene-preview.modal.scene"|trans }}</h6>
+                            <p class="mb-3 h6">{{ "ai-scene-preview.modal.scene"|trans }}</p>
                             
                             {# Upload Area (Initial State) #}
                             <div class="ai-scene-upload-area" data-scene-upload>
@@ -240,10 +240,10 @@
             </div>
             
             <div class="modal-body">
-                <h6>{{ "ai-scene-preview.debug.markedImage"|trans }}</h6>
+                <p class="h6">{{ "ai-scene-preview.debug.markedImage"|trans }}</p>
                 <img src="" alt="{{ "ai-scene-preview.debug.markedImageAlt"|trans }}" class="img-fluid mb-3" data-debug-image>
                 
-                <h6>{{ "ai-scene-preview.debug.prompt"|trans }}</h6>
+                <p class="h6">{{ "ai-scene-preview.debug.prompt"|trans }}</p>
                 <pre class="bg-light p-3" data-debug-prompt></pre>
             </div>
             

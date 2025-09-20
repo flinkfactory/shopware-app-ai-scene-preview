@@ -11,11 +11,10 @@
         <copyright>(c) by flinkfactory</copyright>
         <version>1.0.0</version>
         <icon>Resources/config/plugin.png</icon>
-        <license>MIT</license>
+        <license>proprietary</license>
     </meta>
     <setup>
         <registrationUrl>https://apps.flinkfactory.com/ai-scene-preview/app/lifecycle/register</registrationUrl>
-        <secret>TestSecret</secret>
     </setup>
     <webhooks>
         <webhook name="appActivated" url="https://apps.flinkfactory.com/ai-scene-preview/app/lifecycle/activate" event="app.activated"/>
