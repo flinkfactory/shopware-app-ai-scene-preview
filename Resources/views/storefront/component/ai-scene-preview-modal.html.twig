@@ -29,8 +29,7 @@
      data-error-session-limit="{{ 'ai-scene-preview.error.sessionLimit'|trans|e('html_attr') }}"
      data-error-load-failed="{{ 'ai-scene-preview.error.loadFailed'|trans|e('html_attr') }}"
      data-error-generation-failed="{{ 'ai-scene-preview.error.generationFailed'|trans|e('html_attr') }}"
-     data-error-generation-exception="{{ 'ai-scene-preview.error.generationException'|trans|e('html_attr') }}"
-     data-error-cookie-required="{{ 'ai-scene-preview.error.cookieRequired'|trans|e('html_attr') }}">
+     data-error-generation-exception="{{ 'ai-scene-preview.error.generationException'|trans|e('html_attr') }}">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -92,27 +91,27 @@
                 </div>
 
                 <div class="ai-scene-preview-content-wrapper{{ isLoggedIn ? '' : ' d-none' }}">
-                {# Generation Counter #}
-                <div class="ai-scene-preview-counter mb-3 d-none" data-generations-counter>
-                    <div class="alert alert-info d-flex align-items-start text-white p-2"
-                         role="alert"
-                         data-generations-alert
-                         data-template-low="{{ 'ai-scene-preview.modal.generationsInfoLow'|trans|e('html_attr') }}"
-                         data-template-none="{{ 'ai-scene-preview.modal.generationsInfoNone'|trans|e('html_attr') }}">
-                        {% sw_icon 'info' style { size: 'sm'} %}
-                        <div class="ms-2">
-                            <div class="fw-bold">
-                                <strong data-generations-remaining class="me-1">{{ config('FlinkAiScenePreviewApp.config.maxGenerationsPerSession') }}</strong>
-                                {{ "ai-scene-preview.modal.generationsRemaining"|trans }}
+                    {# Generation Counter #}
+                    <div class="ai-scene-preview-counter mb-3 d-none" data-generations-counter>
+                        <div class="alert alert-info d-flex align-items-start text-white p-2"
+                             role="alert"
+                             data-generations-alert
+                             data-template-low="{{ 'ai-scene-preview.modal.generationsInfoLow'|trans|e('html_attr') }}"
+                             data-template-none="{{ 'ai-scene-preview.modal.generationsInfoNone'|trans|e('html_attr') }}">
+                            {% sw_icon 'info' style { size: 'sm'} %}
+                            <div class="ms-2">
+                                <div class="fw-bold">
+                                    <strong data-generations-remaining class="me-1">{{ config('FlinkAiScenePreviewApp.config.maxGenerationsPerSession') }}</strong>
+                                    {{ "ai-scene-preview.modal.generationsRemaining"|trans }}
+                                </div>
+                                <small class="d-block" data-generations-message></small>
                             </div>
-                            <small class="d-block" data-generations-message></small>
                         </div>
                     </div>
-                </div>
 
-                {# Main Content Area #}
-                <div class="ai-scene-preview-content">
-                    <div class="row">
+                    {# Main Content Area #}
+                    <div class="ai-scene-preview-content">
+                        <div class="row">
                         {# Product Column #}
                         <div class="col-md-3 col-lg-2">
                             <h6 class="mb-3">{{ "ai-scene-preview.modal.product"|trans }}</h6>
@@ -199,28 +198,29 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {# Error Message Area #}
-                <div class="ai-scene-error-message d-none mt-3" data-error-message>
-                    <div class="alert alert-danger d-flex align-items-center text-white" role="alert">
-                        {% sw_icon 'warning' style { size:'sm' } %}
-                        <span data-error-text></span>
-                    </div>
-                </div>
-
-                {# Touch Ghost for Mobile #}
-                <div class="ai-scene-touch-ghost d-none" data-touch-ghost>
-                    <img src="" alt="{{ "ai-scene-preview.modal.touchGhostAlt"|trans }}" class="touch-ghost-image">
+            {# Error Message Area #}
+            <div class="ai-scene-error-message d-none mt-3" data-error-message>
+                <div class="alert alert-danger d-flex align-items-center text-white" role="alert">
+                    {% sw_icon 'warning' style { size:'sm' } %}
+                    <span data-error-text></span>
                 </div>
             </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    {{ "ai-scene-preview.modal.close"|trans }}
-                </button>
+            {# Touch Ghost for Mobile #}
+            <div class="ai-scene-touch-ghost d-none" data-touch-ghost>
+                <img src="" alt="{{ "ai-scene-preview.modal.touchGhostAlt"|trans }}" class="touch-ghost-image">
             </div>
         </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                {{ "ai-scene-preview.modal.close"|trans }}
+            </button>
+        </div>
     </div>
+</div>
 </div>
 
 {# Debug Modal #}
