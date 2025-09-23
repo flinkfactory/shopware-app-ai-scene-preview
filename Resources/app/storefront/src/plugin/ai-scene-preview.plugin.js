@@ -486,16 +486,11 @@ export default class AiScenePreviewPlugin extends Plugin {
         }
 
         try {
-            console.log('Starting generation process...');
             this._showLoadingOverlay();
             this._showPlacementOrb(position);
             this._startLoadingMessages();
-            
-            console.log('Converting scene image to data URL...');
+
             const sceneDataUrl = await this._fileToDataUrl(this.sceneImageFile);
-            console.log('Scene data URL created, length:', sceneDataUrl.length);
-            
-            console.log('Creating request data for app server...');
             
             // Convert product image to data URL for app server
             let productImageDataUrl;
@@ -520,25 +515,18 @@ export default class AiScenePreviewPlugin extends Plugin {
                 productImage: productImageDataUrl
             };
             
-            console.log('Request data created for app server, productId:', this.productId);
-
-            console.log('Making authenticated HTTP request to:', this.options.generateUrl);
-            
             // Make authenticated request to app server
             const result = await this._makeAuthenticatedRequest(
                 this.options.generateUrl,
                 'POST',
                 requestData
             );
-            
-            console.log('Promise resolved with success:', result.success);
 
             this._stopLoadingMessages();
             this._hideLoadingOverlay();
             this._hidePlacementOrb();
 
             if (result.success) {
-                console.log('Generation successful, updating UI...');
                 this.sceneImage.src = result.data.finalImage;
                 this.generationsRemainingCount = result.sessionStatus.remaining;
                 this._updateGenerationCounter();
@@ -554,7 +542,6 @@ export default class AiScenePreviewPlugin extends Plugin {
                 
                 this._hideError();
             } else {
-                console.log('Generation failed with error:', result.error);
                 this._showError(result.error || this.translations.generationFailed);
                 if (result.sessionStatus) {
                     this.generationsRemainingCount = result.sessionStatus.remaining;
@@ -562,7 +549,6 @@ export default class AiScenePreviewPlugin extends Plugin {
                 }
             }
         } catch (error) {
-            console.error('Exception in generation process:', error);
             this._stopLoadingMessages();
             this._hideLoadingOverlay();
             this._hidePlacementOrb();
@@ -576,7 +562,6 @@ export default class AiScenePreviewPlugin extends Plugin {
         }
 
         try {
-            console.log('Checking session status with authenticated request...');
             const result = await this._makeAuthenticatedRequest(
                 this.options.sessionStatusUrl,
                 'GET'
@@ -585,7 +570,6 @@ export default class AiScenePreviewPlugin extends Plugin {
             if (result.success) {
                 this.generationsRemainingCount = result.data.remaining;
                 this._updateGenerationCounter();
-                console.log('Session status updated, remaining:', result.data.remaining);
             }
         } catch (error) {
             console.warn('Could not check session status:', error);

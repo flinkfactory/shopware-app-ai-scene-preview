@@ -25,6 +25,7 @@
         <read>product</read>
         <read>media</read>
         <read>system_config</read>
+        <read>sales_channel</read>
     </permissions>
     <cookies>
         <group>
