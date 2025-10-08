@@ -40,6 +40,19 @@
             </div>
             
             <div class="modal-body">
+
+                {# Error Message Area #}
+                <div class="ai-scene-error-message d-none" data-error-message>
+                    <div class="alert alert-danger alert-has-icon" role="alert">
+                        {% sw_icon 'warning' style { size:'sm' } %}
+                        <div class="alert-content-container">
+                            <div class="alert-content">
+                                <span data-error-text></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="ai-scene-preview-login mb-4{{ isLoggedIn ? ' d-none' : ' row' }}">
                     <div class="col col-md-8 col-lg-6 mx-auto">
                         <p class="card-title h6">{{ "ai-scene-preview.login.title"|trans }}</p>
@@ -90,18 +103,20 @@
                 <div class="ai-scene-preview-content-wrapper{{ isLoggedIn ? '' : ' d-none' }}">
                     {# Generation Counter #}
                     <div class="ai-scene-preview-counter mb-3 d-none" data-generations-counter>
-                        <div class="alert alert-info d-flex align-items-start text-white p-2"
+                        <div class="alert alert-info alert-has-icon"
                              role="alert"
                              data-generations-alert
                              data-template-low="{{ 'ai-scene-preview.modal.generationsInfoLow'|trans|e('html_attr') }}"
                              data-template-none="{{ 'ai-scene-preview.modal.generationsInfoNone'|trans|e('html_attr') }}">
                             {% sw_icon 'info' style { size: 'sm'} %}
-                            <div class="ms-2">
-                                <div class="fw-bold">
-                                    <strong data-generations-remaining class="me-1">{{ config('FlinkAiScenePreviewApp.config.maxGenerationsPerSession') }}</strong>
-                                    {{ "ai-scene-preview.modal.generationsRemaining"|trans }}
+                            <div class="alert-content-container">
+                                <div class="alert-content">
+                                    <strong data-generations-remaining class="me-1">
+                                        {{ config('FlinkAiScenePreviewApp.config.maxGenerationsPerSession') }}
+                                    </strong>
+                                    {{ "ai-scene-preview.modal.generationsRemaining"|trans }}<br>
+                                    <small class="d-block" data-generations-message></small>
                                 </div>
-                                <small class="d-block" data-generations-message></small>
                             </div>
                         </div>
                     </div>
@@ -194,14 +209,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            {# Error Message Area #}
-            <div class="ai-scene-error-message d-none mt-3" data-error-message>
-                <div class="alert alert-danger d-flex align-items-center text-white" role="alert">
-                    {% sw_icon 'warning' style { size:'sm' } %}
-                    <span data-error-text></span>
                 </div>
             </div>
 
